@@ -1,6 +1,7 @@
+import matrix from "../assets/matrix.png"
 const ChatbotIcon = () => {
     return (
-        <img src="src/assets/matrix.png"></img>
+        <img src={matrix}></img>
     )
 }
 
