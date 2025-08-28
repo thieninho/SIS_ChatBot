@@ -21,7 +21,7 @@
             }
 
             if (data.type === "success") {
-                resolve(`✅ ${data.message}`); // "HMP connection opened."
+                resolve(`${data.message}`); // "HMP connection opened."
             } else {
                 reject(data.message || "Failed to open HMP connection.");
             }
@@ -51,7 +51,6 @@
         const removeListener = addMessageListener((msg) => {
         if (msg === "ACK") {
             ackReceived = true;
-            console.log("✅ ACK received");
             return;
         }
 
@@ -65,7 +64,7 @@
             }
 
             if (data.type === "success") {
-            resolve(`✅ ${data.message}`); // "HMP connection closed."
+            resolve(`${data.message}`); // "HMP connection closed."
             } else {
             reject(data.message || "Failed to close HMP connection.");
             }

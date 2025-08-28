@@ -13,7 +13,7 @@
         // Tạo response object
         const response = {
             type: "success",
-            message: `✅ Opening Web Monitor at http://${ip}`,
+            message: `Opening Web Monitor at http://${ip}`,
             errorCode: 0,
             ip
         };

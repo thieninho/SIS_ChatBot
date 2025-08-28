@@ -26,7 +26,7 @@ export async function discoverDevices(timeout = 10000) {
                 return;
             }
 
-            let output = "✅ Discovered devices:\n";
+            let output = "Discovered devices:\n";
             results.forEach((res) => {
                 if (res.devices.length === 0) {
                     //output += `- IP: ${res.ipAddress}: No devices\n`;

@@ -21,8 +21,7 @@ import { sendMessage, addMessageListener } from "./socketClient";
             }
 
             if (data.type === "success") {
-                resolve(`✅ ${data.message}`);
-                console.log(`✅ ${data.message}`)
+                resolve(`${data.message}`);
             } else {
                 reject("To change default config. Please open an HMP connection.");
             }

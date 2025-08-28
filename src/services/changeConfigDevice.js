@@ -30,7 +30,7 @@
                         const m = messages[i];
                         resolve(m);
                     }
-                    resolve("✅ Config changed successfully.");
+                    resolve("Config changed successfully.");
                 } else {
                     console.log(`❌ ${messages.join("\n") || "Failed to change device config."}`);
                 }

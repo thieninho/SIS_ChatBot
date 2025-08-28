@@ -24,13 +24,13 @@
             const results = data.results || [];
 
             if (results.length === 0) {
-                resolve("✅ IP changed, but no devices found.");
+                resolve("IP changed, but no devices found.");
                 removeListener();
                 return;
             }
 
             // format giống discover
-            let output = "✅ IP changed successfully. Updated devices:\n";
+            let output = "IP changed successfully. Updated devices:\n";
             results.forEach((res) => {
                 if (res.devices.length === 0) {
                     //output += `- IP: ${res.ipAddress}: No devices\n`;

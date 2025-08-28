@@ -21,7 +21,7 @@
             }
 
             if (data.message) {
-            resolve(`✅ ${data.message}`);
+            resolve(`${data.message}`);
             } else {
             resolve(JSON.stringify(data));
             }
