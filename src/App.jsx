@@ -19,7 +19,7 @@ const App = () => {
   const [showChatbot, setShowChatbot] = useState(false); 
   const chatBodyRef = useRef();
     useEffect(() => {
-    initSocket(); // connect ngay khi chatbot mở
+    initSocket(); 
   }, []);
   useEffect(() => {
     if (chatBodyRef.current) {

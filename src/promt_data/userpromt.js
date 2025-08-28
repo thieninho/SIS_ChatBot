@@ -7,9 +7,8 @@ import { xpressFunction } from "../services/xpressFunction";
 import { changeDefaultConfig } from "../services/changeDefaultConfig"
 import { openWebMonitor } from "../services/openWebMonitor";
 export const companyInfo = {
-    introduction: `Datalogic Group is a global technology leader ...`,
-    details: `Closeness and timely response ...`,
-    located: `Datalogic Vietnam LLC. F04, Lot I-4a ...`,
+    introduction: `Datalogic is a global technology leader in the automatic data capture and factory automation markets, specialized in the designing and production of bar code readers, mobile computers, sensors for detection, measurement and safety, RFID, vision and laser marking systems.`,
+    located: `DATALOGIC VIETNAM LLC. F04, Lot I-4a Saigon Hi-Tech Park, Long Thanh My Ward, Thu Duc City Ho Chi Minh City Vietnam.`,
 
     "all devices": async () => {
         try {
