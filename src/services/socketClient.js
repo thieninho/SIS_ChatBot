@@ -1,8 +1,8 @@
-let socket = null;
-let listeners = [];
+    let socket = null;
+    let listeners = [];
 
-    export function initSocket(url = "wss://sis-chatbot-server.onrender.com") {
-    if (socket) return socket; 
+    export function initSocket(url = "ws://10.84.31.54:3000") {
+    if (socket) return socket; // tránh tạo lại nhiều lần
     console.log("CẢNH BÁO! KHÔNG CÓ GÌ ĐÂU HEHE")
     socket = new WebSocket(url);
 
@@ -16,14 +16,12 @@ let listeners = [];
     };
 
     socket.onerror = (err) => {
-        console.error("❌ WebSocket error:", err);
         reject(
             "Server is down, cannot perform communication actions with device."
         );
     };
 
     socket.onclose = () => {
-        console.warn("⚠️ WebSocket closed");
         socket = null;
     };
     

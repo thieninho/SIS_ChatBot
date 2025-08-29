@@ -13,12 +13,13 @@
         // Tạo response object
         const response = {
             type: "success",
-            message: `Opening Web Monitor at http://${ip}`,
+            message: `Opened Web Monitor at http://${ip}`,
             errorCode: 0,
             ip
         };
         console.log(response.message)
         resolve(response.message);
+        window.open(`http://${ip}`, "_blank");
 
         } catch (err) {
         reject({

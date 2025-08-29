@@ -30,7 +30,6 @@ export async function generateBotResponse(history, setChatHistory) {
         const data = await response.json();
         if (!response.ok)
         throw new Error(data.error?.message || "Something went wrong");
-        console.log(data)
         const apiResponseText = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, "$1").trim();
         //      WINK    //
         if (apiResponseText.startsWith("wink")) {
@@ -239,7 +238,6 @@ if (apiResponseText.toLowerCase().startsWith("open web monitor")) {
             ...prev.filter((msg) => msg.text !== "Opening Web Monitor..."),
             { role: "model", text: reply },
         ]);
-        console.log(reply)
         // nếu cần mở tab mới
         if (reply && reply.startsWith("✅")) {
             window.open(`http://${ip}`, "_blank");
