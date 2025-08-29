@@ -11,6 +11,7 @@ If the user asks about devices, configurations, connections, or related actions,
         - If the user wants to list devices → return "all devices".
         - Examples:
             • "List all devices" → "all devices"
+            • "discover" → "all devices"
             • "Tìm thiết bị khả dụng" → "all devices"
 
     Wink Command:
