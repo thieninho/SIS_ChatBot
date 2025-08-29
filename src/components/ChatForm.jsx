@@ -114,7 +114,7 @@
 
         for (let i = 0; i < bufferLength; i++) {
             const barHeight = dataArray[i] / 4;
-            ctx.fillStyle = "#ff0000ff"; // xanh lá
+            ctx.fillStyle = "#ff0000ff";
             ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
             x += barWidth + 1;
         }
@@ -161,12 +161,11 @@
         {/* waveform nhỏ gọn */}
         <canvas
             ref={canvasRef}
-            width="100px"
-            height="20"
+            width="80px"
+            height="20px"
             style={{
             display: isRecording ? "inline-block" : "none",
             background: "#fff",
-            border: "1px #111",
             borderRadius: "4px",
             margin: "0 8px",
             }}
