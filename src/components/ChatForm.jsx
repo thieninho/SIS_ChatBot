@@ -1,30 +1,29 @@
-    import { useRef, useState, useEffect } from "react";
-
+import { useRef, useState, useEffect } from "react";
     const ChatForm = ({ chatHistory, setChatHistory, generateBotResponse, language }) => {
     const inputRef = useRef();
-    const canvasRef = useRef();
     const [isRecording, setIsRecording] = useState(false);
     const [recognition, setRecognition] = useState(null);
-    const animationRef = useRef();
     const audioContextRef = useRef();
     const analyserRef = useRef();
     const sourceRef = useRef();
     const mediaStreamRef = useRef();
+    const silenceTimerRef = useRef(null);
+    const [volume, setVolume] = useState(0);
 
     useEffect(() => {
         if ("webkitSpeechRecognition" in window) {
         const SpeechRecognition =
             window.SpeechRecognition || window.webkitSpeechRecognition;
         const newRecognition = new SpeechRecognition();
-        newRecognition.lang = "en-US";
-        newRecognition.interimResults = true;   // transcript liên tục
-        newRecognition.continuous = true;       // không tự end
+        newRecognition.lang = language || "en-US";
+        newRecognition.interimResults = true;
+        newRecognition.continuous = true;
 
         newRecognition.onresult = (event) => {
-        let interimTranscript = "";
-        let finalTranscript = "";
+            let interimTranscript = "";
+            let finalTranscript = "";
 
-        for (let i = event.resultIndex; i < event.results.length; ++i) {
+            for (let i = event.resultIndex; i < event.results.length; ++i) {
             const transcript = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
                 finalTranscript += transcript;
@@ -33,14 +32,21 @@
             }
             }
 
-            // Cập nhật realtime transcript trong input
             if (inputRef.current) {
             inputRef.current.value = finalTranscript + interimTranscript;
             }
+
+            // reset silence timer
+            if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+            silenceTimerRef.current = setTimeout(() => {
+            if (inputRef.current && inputRef.current.value.trim()) {
+                handleFormSubmit({ preventDefault: () => {} });
+            }
+            }, 3000);
         };
 
         newRecognition.onerror = (e) => {
-        console.error("Recognition error:", e.error);
+            console.error("Recognition error:", e.error);
         };
 
         setRecognition(newRecognition);
@@ -52,8 +58,8 @@
     }, []);
 
     const startRecording = async () => {
-    if (!recognition) return;
-    try {
+        if (!recognition) return;
+        try {
         recognition.start();
         setIsRecording(true);
 
@@ -65,7 +71,7 @@
         sourceRef.current = audioContextRef.current.createMediaStreamSource(stream);
         sourceRef.current.connect(analyserRef.current);
 
-        drawWaveform();
+        trackVolume();
         } catch (err) {
         console.error("Microphone access error:", err);
         stopRecording();
@@ -76,7 +82,11 @@
         setIsRecording(false);
         if (recognition) recognition.stop();
 
-        if (animationRef.current) cancelAnimationFrame(animationRef.current);
+        if (silenceTimerRef.current) {
+        clearTimeout(silenceTimerRef.current);
+        silenceTimerRef.current = null;
+        }
+
         if (sourceRef.current) sourceRef.current.disconnect();
         if (audioContextRef.current) audioContextRef.current.close();
         if (mediaStreamRef.current) {
@@ -87,39 +97,24 @@
         sourceRef.current = null;
         audioContextRef.current = null;
         mediaStreamRef.current = null;
-
-        const canvas = canvasRef.current;
-        if (canvas) {
-        const ctx = canvas.getContext("2d");
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        }
+        setVolume(0);
     };
 
-    const drawWaveform = () => {
-        const canvas = canvasRef.current;
-        const ctx = canvas.getContext("2d");
+    const trackVolume = () => {
+        if (!analyserRef.current) return;
         analyserRef.current.fftSize = 256;
         const bufferLength = analyserRef.current.frequencyBinCount;
         const dataArray = new Uint8Array(bufferLength);
 
-        const draw = () => {
-        animationRef.current = requestAnimationFrame(draw);
-
+        const update = () => {
+        if (!analyserRef.current) return;
         analyserRef.current.getByteFrequencyData(dataArray);
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        const barWidth = 2;
-        let x = 0;
-
-        for (let i = 0; i < bufferLength; i++) {
-            const barHeight = dataArray[i] / 4;
-            ctx.fillStyle = "#ff0000ff";
-            ctx.fillRect(x, canvas.height - barHeight, barWidth, barHeight);
-            x += barWidth + 1;
-        }
+        const avg =
+            dataArray.reduce((a, b) => a + b, 0) / dataArray.length / 255;
+        setVolume(avg); // 0 → 1
+        requestAnimationFrame(update);
         };
-        draw();
+        update();
     };
 
     const handleFormSubmit = (e) => {
@@ -127,6 +122,7 @@
         const userMessage = inputRef.current.value.trim();
         if (!userMessage) return;
         inputRef.current.value = "";
+
         setChatHistory((history) => [
         ...history,
         { role: "user", text: userMessage },
@@ -139,6 +135,7 @@
             ]),
         600
         );
+
         generateBotResponse([
         ...chatHistory,
         {
@@ -158,44 +155,63 @@
             required
         />
 
-        {/* waveform nhỏ gọn */}
-        <canvas
-            ref={canvasRef}
-            width="80px"
-            height="20px"
-            style={{
-            display: isRecording ? "inline-block" : "none",
-            background: "#fff",
-            borderRadius: "4px",
-            margin: "0 8px",
-            }}
-        ></canvas>
-            {isRecording ? (
-            <button
-            style={{display: "block",
-                    background: "#ff0000ff",
-            }}
-            type="button"
-            onClick={stopRecording}
-            className="material-symbols-outlined"
-            >
-            stop
-            </button>
-        ) : (
-            <button
-            style={{display: "block"}}
-            type="button"
-            onClick={startRecording}
-            className="material-symbols-outlined"
-            >
-            mic
-            </button>
-        )}
-
-        <button 
-        type="submit" className="material-symbols-outlined"
+        {isRecording ? (
+    <div style={{ position: "relative", display: "inline-block" }}>
+        {/* Ripple effect */}
+        <span
+        style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+            background: "#ff0000",
+            animation: "ripple 1.5s infinite",
+            zIndex: 0,
+        }}
+        />
+        <span
+        style={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            width: "100%",
+            height: "100%",
+            borderRadius: "50%",
+            background: "#ff0000",
+            transform: "translate(-50%, -50%) scale(1)",
+            animation: "ripple 1.5s infinite 0.5s", // delay cho layer thứ 2
+            zIndex: 0,
+        }}
+        />
+        <button
+        style={{
+            display: "block",
+            background: "#ff0000",
+            position: "relative",
+            zIndex: 1,
+            borderRadius: "50%",
+        }}
+        type="button"
         onClick={stopRecording}
+        className="material-symbols-outlined mic-button"
         >
+        stop
+        </button>
+    </div>
+    ) : (
+    <button
+        style={{ display: "block" }}
+        type="button"
+        onClick={startRecording}
+        className="material-symbols-outlined mic-button"
+    >
+        mic
+    </button>
+    )}
+
+        <button type="submit" className="material-symbols-outlined">
             send
         </button>
         </form>
