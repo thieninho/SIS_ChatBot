@@ -60,6 +60,35 @@ export async function generateBotResponse(history, setChatHistory) {
             }
             return;
         }
+        //      Restart    //
+        if (apiResponseText.startsWith("restart")) {
+            const parts = apiResponseText.trim().split(/\s+/);
+            const arg = parts[1] || null;
+
+            if (!arg) {
+                updateHistory("Please provide device serial or IP");
+                return;
+            }
+
+            setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== "Thinking..."),
+                { role: "model", text: "Rebooting...", isPending: true }
+            ]);
+
+            try {
+                const reply = await companyInfo["restart"](arg);
+                setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== "Rebooting..."),
+                { role: "model", text: reply }
+                ]);
+            } catch (err) {
+                setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== "Rebooting..."),
+                { role: "model", text: String(err), isError: true }
+                ]);
+            }
+            return;
+        }
         //      CHANGE IP    //
         if (apiResponseText.toLowerCase().startsWith("change ip")) {
             const parts = apiResponseText.split(/\s+/);
@@ -214,10 +243,47 @@ export async function generateBotResponse(history, setChatHistory) {
             return;
         }
         // --- xử lý open web monitor ---
-if (apiResponseText.toLowerCase().startsWith("open web monitor")) {
-    const parts = apiResponseText.split(" ");
-    const ip = parts[3] || parts[2];  // ví dụ: "open web monitor 192.168.1.10"
+    if (apiResponseText.toLowerCase().startsWith("open web monitor")) {
+        const parts = apiResponseText.split(" ");
+        const ip = parts[3] || parts[2];  // ví dụ: "open web monitor 192.168.1.10"
 
+        if (!ip) {
+            setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== "Thinking..."),
+                { role: "model", text: "⚠️ Please provide device IP" }
+            ]);
+            return;
+        }
+
+        setChatHistory((prev) => [
+            ...prev.filter((msg) => msg.text !== "Thinking..."),
+            { role: "model", text: "Opening Web Monitor...", isPending: true },
+        ]);
+
+        try {
+            const reply = await companyInfo["open web monitor"](ip);
+
+            setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== "Opening Web Monitor..."),
+                { role: "model", text: reply },
+            ]);
+            // nếu cần mở tab mới
+            if (reply && reply.startsWith("✅")) {
+                window.open(`http://${ip}`, "_blank");
+            }
+        } catch (err) {
+            setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== "Opening Web Monitor..."),
+                { role: "model", text: String(err), isError: true },
+            ]);
+        }
+        return;
+    }
+
+    // --- xử lý open list function ---
+if (apiResponseText.toLowerCase().startsWith("list xpress")) {
+    const parts = apiResponseText.split(" ");
+    const ip = parts[2]; 
     if (!ip) {
         setChatHistory((prev) => [
             ...prev.filter((msg) => msg.text !== "Thinking..."),
@@ -228,20 +294,28 @@ if (apiResponseText.toLowerCase().startsWith("open web monitor")) {
 
     setChatHistory((prev) => [
         ...prev.filter((msg) => msg.text !== "Thinking..."),
-        { role: "model", text: "Opening Web Monitor...", isPending: true },
+        { role: "model", text: "Opening List XPRESS...", isPending: true },
     ]);
 
     try {
-        const reply = await companyInfo["open web monitor"](ip);
+        const reply = await companyInfo["list xpress"](ip);
 
-        setChatHistory((prev) => [
-            ...prev.filter((msg) => msg.text !== "Opening Web Monitor..."),
-            { role: "model", text: reply },
-        ]);
-        // nếu cần mở tab mới
-        if (reply && reply.startsWith("✅")) {
-            window.open(`http://${ip}`, "_blank");
+        if (reply.type === "success" && reply.results) {
+            let table = Object.entries(reply.results)
+            .map(([key, val]) => `• ${key} → ${val}`)
+            .join("\n");
+            setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== "Opening List XPRESS..."),
+                { role: "model", text: "XPRESS Functions:\n" + table },
+            ]);
+            //await sendReportEmail(reply.results, ip, "target@example.com");
+        } else {
+            setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== "Opening List XPRESS..."),
+                { role: "model", text: reply.message || "❌ Failed to get XPRESS list" },
+            ]);
         }
+
     } catch (err) {
         setChatHistory((prev) => [
             ...prev.filter((msg) => msg.text !== "Opening Web Monitor..."),
@@ -250,19 +324,57 @@ if (apiResponseText.toLowerCase().startsWith("open web monitor")) {
     }
     return;
 }
-        // --- xử lý change default config ---
-        // if (apiResponseText === "change default config") {
-        //     setChatHistory((prev) => [
-        //     ...prev,
-        //     { role: "model", text: "Changing default config..." }
-        //     ]);
-        //     const reply = await companyInfo["change default config"]();
-        //     setChatHistory((prev) => [
-        //     ...prev.filter((msg) => msg.text !== "Changing default config..."),
-        //     { role: "model", text: reply }
-        //     ]);
-        // }
-        //      OTHER KEYWORD    //
+
+
+// --- xử lý send report ---
+if (apiResponseText.toLowerCase().startsWith("send report")) {
+    const parts = apiResponseText.split(" ");
+    const ip = parts[2];
+    const email = parts[3];
+
+    // validate IP
+    if (!ip || !/^(\d{1,3}\.){3}\d{1,3}$/.test(ip)) {
+        setChatHistory((prev) => [
+            ...prev.filter((msg) => msg.text !== "Thinking..."),
+            { role: "model", text: "⚠️ Please provide a valid IP address" },
+        ]);
+        return;
+    }
+    // validate email
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setChatHistory((prev) => [
+            ...prev.filter((msg) => msg.text !== "Thinking..."),
+            { role: "model", text: "⚠️ Please provide a valid email address" },
+        ]);
+        return;
+    }
+    if (!ip) {
+            setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== "Thinking..."),
+                { role: "model", text: "⚠️ Please provide device IP" }
+            ]);
+            return;
+        }
+    setChatHistory((prev) => [
+        ...prev.filter((msg) => msg.text !== "Thinking..."),
+        { role: "model", text: `Sending XPRESS report to ${email}...`, isPending: true },
+    ]);
+
+    try {
+        const reply = await companyInfo["send report"](ip, email);
+        setChatHistory((prev) => [
+            ...prev.filter((msg) => msg.text !== `Sending XPRESS report to ${email}...`),
+            { role: "model", text: reply },
+        ]);
+    } catch (err) {
+        setChatHistory((prev) => [
+            ...prev.filter((msg) => msg.text !== `Sending XPRESS report to ${email}...`),
+            { role: "model", text: String(err), isError: true },
+        ]);
+    }
+    return;
+}
+    //-----------------------------------------------------------//
         if (companyInfo[apiResponseText]) {
             const value = companyInfo[apiResponseText];
             const reply =typeof value === "function" ? await value() : String(value);

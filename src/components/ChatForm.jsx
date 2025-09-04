@@ -180,7 +180,7 @@ import { useRef, useState, useEffect } from "react";
             height: "100%",
             borderRadius: "50%",
             background: "#ff0000",
-            transform: "translate(-50%, -50%) scale(1)",
+            transform: "translate(-50%, -50%) scale(0.5)",
             animation: "ripple 1.5s infinite 0.5s", // delay cho layer thứ 2
             zIndex: 0,
         }}

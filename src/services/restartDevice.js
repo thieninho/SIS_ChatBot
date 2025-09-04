@@ -1,28 +1,31 @@
-    import { sendMessage, addMessageListener } from "./socketClient";
+import { sendMessage, addMessageListener } from "./socketClient";
 
-    export async function xpressFunction(fn) {
+    export async function restartDevice(arg) {
     return new Promise((resolve, reject) => {
         let ackReceived = false;
 
         const removeListener = addMessageListener((msg) => {
         if (msg === "ACK") {
             ackReceived = true;
-            console.log("✅ ACK received for XPRESS");
+            console.log("✅ ACK received for wink");
             return;
         }
+        ///////////////////////////////
 
+        ///////////////////////////////
         try {
             const data = JSON.parse(msg);
+
             if (!ackReceived) {
             reject("❌ No ACK before data");
             removeListener();
             return;
             }
-            if (data.type === "success") {
-                resolve(`${data.message} Please ensure that the device has completed execution before proceeding with the next action.`);
-            } 
-            else if (data.type === "error") {
-                reject("Failed to execute Xpress function.");
+
+            if (data.message) {
+            resolve(`${data.message}`);
+            } else {
+            resolve(JSON.stringify(data));
             }
             removeListener();
         } catch (e) {
@@ -30,12 +33,21 @@
             removeListener();
         }
         });
-        // gửi request
-        sendMessage({
-            message: "xpressFunction",
-            function: fn, // XPRESS 1, XPRESS 2, ...
-        });
-        // timeout
+
+        if (!arg) {
+        reject("⚠️ Please provide device serial or IP");
+        removeListener();
+        return;
+        }
+
+        const payload = { message: "restartDevice" };
+
+        if (/^\d{1,3}(\.\d{1,3}){3}$/.test(arg)) {
+        payload.IP = arg;
+        }
+
+        sendMessage(payload);
+
         setTimeout(() => {
         if (!ackReceived) {
             reject("❌ Server is down, cannot perform communication actions with device.");

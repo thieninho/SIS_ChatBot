@@ -1,16 +1,14 @@
     import { sendMessage, addMessageListener } from "./socketClient";
 
-    export async function xpressFunction(fn) {
+    export async function listXPress(ip) {
     return new Promise((resolve, reject) => {
         let ackReceived = false;
-
         const removeListener = addMessageListener((msg) => {
         if (msg === "ACK") {
             ackReceived = true;
-            console.log("✅ ACK received for XPRESS");
+            console.log("✅ ACK received");
             return;
         }
-
         try {
             const data = JSON.parse(msg);
             if (!ackReceived) {
@@ -19,28 +17,33 @@
             return;
             }
             if (data.type === "success") {
-                resolve(`${data.message} Please ensure that the device has completed execution before proceeding with the next action.`);
-            } 
-            else if (data.type === "error") {
-                reject("Failed to execute Xpress function.");
+            resolve({
+                type: "success",
+                ip,
+                results: data.results,
+                errorCode: data.errorCode || 0,
+            });
+            } else {
+            reject({
+                type: "error",
+                message: data.message || "❌ Failed to get XPRESS list",
+                errorCode: data.errorCode || 1,
+            });
             }
             removeListener();
         } catch (e) {
-            reject("Error parsing response: " + e.message);
+            reject({ type: "error", message: "Error parsing response: " + e.message });
             removeListener();
         }
         });
-        // gửi request
-        sendMessage({
-            message: "xpressFunction",
-            function: fn, // XPRESS 1, XPRESS 2, ...
-        });
-        // timeout
+
+        sendMessage({ message: "xpressList", IP: ip });
+
         setTimeout(() => {
         if (!ackReceived) {
-            reject("❌ Server is down, cannot perform communication actions with device.");
+            reject({ type: "error", message: "❌ Server did not respond with ACK" });
             removeListener();
         }
         }, 3000);
     });
-}
+    }

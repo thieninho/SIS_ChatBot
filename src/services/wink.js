@@ -38,10 +38,8 @@
         return;
         }
 
-        // Chuẩn bị payload
         const payload = { message: "wink" };
 
-        // Nếu là IP → cho vào IP, nếu không thì coi như serial
         if (/^\d{1,3}(\.\d{1,3}){3}$/.test(arg)) {
         payload.IP = arg;
         } else {
@@ -50,7 +48,6 @@
 
         sendMessage(payload);
 
-        // timeout nếu không nhận ACK
         setTimeout(() => {
         if (!ackReceived) {
             reject("❌ Server is down, cannot perform communication actions with device.");

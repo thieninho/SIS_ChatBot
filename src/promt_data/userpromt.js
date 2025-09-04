@@ -6,6 +6,9 @@ import { openHMP, closeHMP } from "../services/hmpConnection";
 import { xpressFunction } from "../services/xpressFunction";
 import { changeDefaultConfig } from "../services/changeDefaultConfig"
 import { openWebMonitor } from "../services/openWebMonitor";
+import { listXPress } from "../services/listXPress";
+import { sendReportEmail } from "../services/sendReportEmail";
+import { restartDevice } from "../services/restartDevice";
 export const companyInfo = {
     "introduction": `Datalogic is a global technology leader in the automatic data capture and factory automation markets, specialized in the designing and production of bar code readers, mobile computers, sensors for detection, measurement and safety, RFID, vision and laser marking systems.`,
     "located": `DATALOGIC VIETNAM LLC. F04, Lot I-4a Saigon Hi-Tech Park, Long Thanh My Ward, Thu Duc City Ho Chi Minh City Vietnam.`,
@@ -21,6 +24,13 @@ export const companyInfo = {
     "wink": async (arg) => {
     try {
         return await winkDevice(arg);
+        } catch (err) {
+        return String(err);
+        }
+    },
+    "restart": async (arg) => {
+    try {
+        return await restartDevice(arg);
         } catch (err) {
         return String(err);
         }
@@ -83,5 +93,23 @@ export const companyInfo = {
         return String(err);
         }
     },
-    "update device": `Feature coming soon...`,
+    
+    "list xpress": async (ip) => {
+    try {
+        return await listXPress(ip);
+    } catch (err) {
+        return String(err);
+        }
+    },
+
+    "send report": async (ip, email) => {
+    try {
+        const reply = await companyInfo["list xpress"](ip);
+        console.log(reply.results)
+        const functions = reply.results;
+        return await sendReportEmail(ip, email, functions);
+    } catch (err) {
+        return String(err);
+    }
+    },
     };
