@@ -19,10 +19,10 @@
             return;
             }
             if (data.type === "success") {
-                resolve(`${data.message} Please ensure that the device has completed execution before proceeding with the next action.`);
+                resolve(`${data.message}`);
             } 
             else if (data.type === "error") {
-                reject("Failed to execute Xpress function.");
+                reject("Please open HMP or provide IP address of the device.");
             }
             removeListener();
         } catch (e) {

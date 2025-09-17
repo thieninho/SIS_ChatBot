@@ -12,24 +12,36 @@ import { sendMessage, addMessageListener } from "./socketClient";
         }
         ///////////////////////////////
 
-        ///////////////////////////////
+        //////////////////////////////
         try {
             const data = JSON.parse(msg);
+                if (!ackReceived) {
+                    reject("❌ No ACK before response");
+                    removeListener();
+                    return;
+                }
 
-            if (!ackReceived) {
-            reject("❌ No ACK before data");
-            removeListener();
-            return;
-            }
-
-            if (data.message) {
-            resolve(`${data.message}`);
-            } else {
-            resolve(JSON.stringify(data));
-            }
-            removeListener();
+                let messages = [];
+                
+                if (Array.isArray(data.message)) {
+                    messages = data.message;
+                } else if (typeof data.message === "object" && data.message !== null) {
+                    messages = Object.values(data.message);
+                } else if (data.message) {
+                    messages = [data.message];
+                }
+                if (data.type === "success") {
+                    for (let i = 0; i < messages.length; i++) {
+                        const m = messages[i];
+                        resolve(m);
+                    }
+                    resolve("Config changed successfully.");
+                } else {
+                    console.log(`❌ ${messages.join("\n") || "Failed to change device config."}`);
+                }
+                //removeListener();
         } catch (e) {
-            reject("Error parsing response: " + e.message);
+            reject("❌ Error parsing response: " + e.message);
             removeListener();
         }
         });

@@ -12,8 +12,8 @@
         <table border="1" cellpadding="6" cellspacing="0" style="border-collapse: collapse; font-family: Arial; font-size: 14px; width: 100%;">
             <thead style="background-color:#f2f2f2; text-align: left;">
             <tr>
-                <th style="padding: 8px; border: 1px solid #ddd;">Function</th>
                 <th style="padding: 8px; border: 1px solid #ddd;">Name</th>
+                <th style="padding: 8px; border: 1px solid #ddd;">Value</th>
             </tr>
             </thead>
             <tbody>

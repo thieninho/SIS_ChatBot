@@ -74,14 +74,22 @@ export async function generateBotResponse(history, setChatHistory) {
                 ...prev.filter((msg) => msg.text !== "Thinking..."),
                 { role: "model", text: "Rebooting...", isPending: true }
             ]);
-
             try {
-                const reply = await companyInfo["restart"](arg);
-                setChatHistory((prev) => [
-                ...prev.filter((msg) => msg.text !== "Rebooting..."),
-                { role: "model", text: reply }
-                ]);
-            } catch (err) {
+            let lastMessage = null;
+
+            for (let i = 0; i < 2; i++) {
+                await new Promise(res => setTimeout(res, 500));
+                const messages = await companyInfo["restart"](arg);
+                    if (messages !== lastMessage) {
+                        setChatHistory((prev) => [
+                        ...prev.filter((msg) => msg.text !== "Rebooting..."),
+                        { role: "model", text: messages },
+                        ]);
+                        lastMessage = messages;
+                    }
+                }
+            }
+            catch (err) {
                 setChatHistory((prev) => [
                 ...prev.filter((msg) => msg.text !== "Rebooting..."),
                 { role: "model", text: String(err), isError: true }
@@ -226,19 +234,42 @@ export async function generateBotResponse(history, setChatHistory) {
             return;
         }
 
-        // --- xử lý xpress function ---
         if (apiResponseText.toLowerCase().startsWith("xpress")) {
-            const fn = apiResponseText.toUpperCase();
-            updateHistory("Running " + fn + "...");
-            try {
-                const reply = await companyInfo["xpress"](fn);
-                setChatHistory((prev) => [
-                ...prev.filter((msg) => msg.text !== "Running " + fn + "..."),
-                { role: "model", text: reply },
-                ]);
-                //updateHistory(reply);
-            } catch (err) {
-                updateHistory(err, true);
+            const parts = apiResponseText.trim().split(/\s+/);
+            const fn = `${parts[0].toUpperCase()} ${parts[1]}`; // XPRESS 1, XPRESS 2, ...
+            const ip = parts[2] || null;
+
+            if (ip) {
+                // setChatHistory((prev) => [
+                //     ...prev.filter((msg) => msg.text !== "Thinking..."),
+                //     { role: "model", text: `Running ${fn} directly on ${ip}...`, isPending: true },
+                // ]);
+
+                try {
+                    const reply = await companyInfo["xpressFunctionDirectly"](fn, ip);
+                    setChatHistory((prev) => [
+                        ...prev.filter((msg) => msg.text !== "Thinking..."),
+                        { role: "model", text: reply },
+                    ]);
+                } catch (err) {
+                    updateHistory(err, true);
+                }
+            } else {
+                // fallback: không có IP thì chạy xpress qua HMP
+                // setChatHistory((prev) => [
+                //     ...prev.filter((msg) => msg.text !== "Thinking..."),
+                //     { role: "model", text: `Running ${fn}...`, isPending: true },
+                // ]);
+
+                try {
+                    const reply = await companyInfo["xpress"](fn);
+                    setChatHistory((prev) => [
+                        ...prev.filter((msg) => msg.text !== "Thinking..."),
+                        { role: "model", text: reply },
+                    ]);
+                } catch (err) {
+                    updateHistory(err, true);
+                }
             }
             return;
         }
@@ -325,6 +356,56 @@ if (apiResponseText.toLowerCase().startsWith("list xpress")) {
     return;
 }
 
+// --- xử lý get statistics ---
+if (apiResponseText.toLowerCase().startsWith("get statistics")) {
+    const parts = apiResponseText.split(" ");
+    const ip = parts[2]; 
+
+    if (!ip) {
+        setChatHistory((prev) => [
+            ...prev.filter((msg) => msg.text !== "Thinking..."),
+            { role: "model", text: "⚠️ Please provide device IP" }
+        ]);
+        return;
+    }
+
+    setChatHistory((prev) => [
+        ...prev.filter((msg) => msg.text !== "Thinking..."),
+        { role: "model", text: "Retrieving device statistics...", isPending: true },
+    ]);
+
+    try {
+        const reply = await companyInfo["get statistics"](ip);
+        console.log(reply)
+        if (reply.type === "success" && reply.results) {
+            let table = Object.entries(reply.results)
+                .map(([key, val]) => `• ${key}: ${val}`)
+                .join("\n");
+
+            setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== "Retrieving device statistics..."),
+                { role: "model", text: "📊 Device Statistics:\n" + table },
+            ]);
+
+            // Optional: export PDF/Email nếu cần
+            // await sendReportEmail(reply.results, ip, "target@example.com");
+
+        } else {
+            setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== "Retrieving device statistics..."),
+                { role: "model", text: reply.message || "❌ Failed to retrieve statistics." },
+            ]);
+        }
+
+    } catch (err) {
+        setChatHistory((prev) => [
+            ...prev.filter((msg) => msg.text !== "Retrieving device statistics..."),
+            { role: "model", text: String(err), isError: true },
+        ]);
+    }
+    return;
+}
+
 
 // --- xử lý send report ---
 if (apiResponseText.toLowerCase().startsWith("send report")) {
@@ -357,18 +438,18 @@ if (apiResponseText.toLowerCase().startsWith("send report")) {
         }
     setChatHistory((prev) => [
         ...prev.filter((msg) => msg.text !== "Thinking..."),
-        { role: "model", text: `Sending XPRESS report to ${email}...`, isPending: true },
+        { role: "model", text: `Sending Statistics report to ${email}...`, isPending: true },
     ]);
 
     try {
         const reply = await companyInfo["send report"](ip, email);
         setChatHistory((prev) => [
-            ...prev.filter((msg) => msg.text !== `Sending XPRESS report to ${email}...`),
+            ...prev.filter((msg) => msg.text !== `Sending Statistics report to ${email}...`),
             { role: "model", text: reply },
         ]);
     } catch (err) {
         setChatHistory((prev) => [
-            ...prev.filter((msg) => msg.text !== `Sending XPRESS report to ${email}...`),
+            ...prev.filter((msg) => msg.text !== `Sending Statistics report to ${email}...`),
             { role: "model", text: String(err), isError: true },
         ]);
     }

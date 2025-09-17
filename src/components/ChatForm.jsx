@@ -158,7 +158,7 @@ import { useRef, useState, useEffect } from "react";
         {isRecording ? (
     <div style={{ position: "relative", display: "inline-block" }}>
         {/* Ripple effect */}
-        <span
+        {/* <span
         style={{
             position: "absolute",
             top: "50%",
@@ -184,7 +184,7 @@ import { useRef, useState, useEffect } from "react";
             animation: "ripple 1.5s infinite 0.5s", // delay cho layer thứ 2
             zIndex: 0,
         }}
-        />
+        /> */}
         <button
         style={{
             display: "block",
@@ -210,7 +210,6 @@ import { useRef, useState, useEffect } from "react";
         mic
     </button>
     )}
-
         <button type="submit" className="material-symbols-outlined">
             send
         </button>

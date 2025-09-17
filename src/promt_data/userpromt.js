@@ -9,6 +9,8 @@ import { openWebMonitor } from "../services/openWebMonitor";
 import { listXPress } from "../services/listXPress";
 import { sendReportEmail } from "../services/sendReportEmail";
 import { restartDevice } from "../services/restartDevice";
+import { xpressFunctionDirectly } from "../services/xpressFuncDirectly";
+import { getDeviceStatistics } from "../services/getDeviceStats";
 export const companyInfo = {
     "introduction": `Datalogic is a global technology leader in the automatic data capture and factory automation markets, specialized in the designing and production of bar code readers, mobile computers, sensors for detection, measurement and safety, RFID, vision and laser marking systems.`,
     "located": `DATALOGIC VIETNAM LLC. F04, Lot I-4a Saigon Hi-Tech Park, Long Thanh My Ward, Thu Duc City Ho Chi Minh City Vietnam.`,
@@ -79,6 +81,14 @@ export const companyInfo = {
         }
     },
 
+    "xpressFunctionDirectly": async (fn, ip) => {
+        try {
+            return await xpressFunctionDirectly(fn, ip);
+        } catch (err) {
+            return String(err);
+        }
+    },
+
     "change default config": async () => {
     try {
         return await changeDefaultConfig();
@@ -101,10 +111,17 @@ export const companyInfo = {
         return String(err);
         }
     },
+    "get statistics": async (ip) => {
+        try {
+            return await getDeviceStatistics(ip);
+        } catch (err) {
+            return String(err);
+        }
+    },
 
     "send report": async (ip, email) => {
     try {
-        const reply = await companyInfo["list xpress"](ip);
+        const reply = await companyInfo["get statistics"](ip);
         console.log(reply.results)
         const functions = reply.results;
         return await sendReportEmail(ip, email, functions);
