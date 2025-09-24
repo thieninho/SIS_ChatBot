@@ -7,7 +7,7 @@
   font-family: "Inter", sans-serif;
 }
 
-body {
+/* body {
   width: 100%;
   display: flex;
   align-items: center;
@@ -16,6 +16,20 @@ body {
   background-image: url("./assets/Picture.png");
   position: fixed;
   background-size: cover;
+} */
+body {
+  width: 100%;
+  /* bỏ fixed + background để không chiếm full web */
+  display: block;
+  min-height: auto;
+  position: relative;
+  background: none !important;
+}
+.chatbot-popup {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 9999999999999999; /* để nổi trên trang */
 }
 
 #chatbot-toggler {
@@ -28,7 +42,7 @@ body {
   display: flex;
   cursor: pointer;
   border-radius: 50%;
-  background: #fff;
+  background: #061a75;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
@@ -36,7 +50,7 @@ body {
 
 #chatbot-toggler span {
   position: absolute;
-  color: #061a75;
+  color: #fff;
 }
 #chatbot-toggler span:last-child,
 .container.show-chatbot #chatbot-toggler span:first-child {
@@ -79,7 +93,7 @@ body {
   .chatbot-popup {
     width: 80vw;
     height: 80vh;
-    border-radius: 20px;
+    border-radius: 15px;
     position: fixed;
     right: 35px;
   }
@@ -97,7 +111,7 @@ body {
     width: 80vw;
     height: 80vh;
     position: fixed;
-    border-radius: 20px;
+    border-radius: 10px;
     right: 35px;
   }
   .chatbot-popup .chat-header {
@@ -108,11 +122,11 @@ body {
 
 .chatbot-popup .chat-header {
   display: flex;
-  padding: 15px 22px;
+  padding: 13px 15px;
   align-items: center;
   justify-content:  space-between;
-  background: #0826ac;
-
+  background: #061a75;
+  border-radius: 0px 0px 5px 5px;
 }
 
 .chat-header .header-info {
@@ -122,11 +136,11 @@ body {
 }
 .chat-header img {
   width: 50%;
-  padding: 3px;
+  padding: 7px 5px 5px 5px;
   color: #fff;
 }
 .header-info img {
-  width: 30%;
+  width: 40%;
 }
 
 .header-info .logo-text {
@@ -215,54 +229,72 @@ body {
   bottom: 0;
   width: 100%;
   background: #fff;
-  padding: 15px 22px 20px;
+  padding: 12px;
+  border-top: 1px solid #e0e0e0;
+  box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .chat-footer .chat-form {
   display: flex;
   align-items: center;
-  background: #fff;
+  background: #f8f9fa;
   border-radius: 20px;
-  outline: 1px solid #CCCCE5;
-  box-shadow: 0 0 8px rgba(0, 0, 0, 0.06);
+  outline: 1px solid #d1d5db;
+  transition: all 0.2s ease;
+  position: relative;
 }
+
 .chat-footer .chat-form:focus-within {
   outline: 2px solid #0826ac;
+  box-shadow: 0 0 0 3px rgba(8, 38, 172, 0.1);
 }
+
 .chat-form .message-input {
   border: none;
   outline: none;
   background: none;
   height: 50px;
   width: 100%;
-  padding: 0 17px;
+  padding: 0 16px;
   font-size: 0.95rem;
+  resize: none;
 }
 
+.chat-form .message-input::placeholder {
+  color: #9ca3af;
+}
 .chat-form button {
   height: 42px;
   width: 42px;
   border: none;
   outline: none;
-  display: none;
   cursor: pointer;
-  font-size: 1.15rem;
+  display: none;
+  font-size: 1.2rem;
   color: #fff;
   flex-shrink: 0;
   border-radius: 50%;
   background: #061a75;
-  margin-right: 5px;
-  transition: 0.2s ease;
+  margin-right: 8px;
+  margin-left: 4px;
+  transition: all 0.2s ease;
 }
 
-
-
-.chat-form button:hover {
+.chat-form button:not(:disabled):hover {
   background: #0826ac;
+  transform: scale(1.05);
+  opacity: 1;
 }
 
-.chat-form .message-input:valid ~ button {
+.chat-form button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.chat-form .message-input:valid ~ button
+{
   display: block;
+  opacity: 1;
 }
 
 
@@ -274,5 +306,52 @@ body {
   100% {
     transform: translate(-50%, -50%) scale(2.5);
     opacity: 0;
+  }
+}
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.chat-message {
+  animation: fadeInUp 0.4s ease;
+}
+
+/* Responsive cho mobile */
+@media (max-width: 600px) {
+  .chatbot-container {
+    width: 100vw;
+    min-height: 100vh;
+    margin: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  .chat-header {
+    font-size: 1.1rem;
+    padding: 12px;
+  }
+  .chat-messages {
+    padding: 10px;
+  }
+  .chat-input-area {
+    padding: 10px;
+  }
+  .chat-input {
+    font-size: 0.95rem;
+    padding: 8px 10px;
+  }
+  .send-btn {
+    font-size: 0.95rem;
+    padding: 8px 12px;
+  }
+  .message-bubble {
+    font-size: 0.95rem;
+    padding: 10px 12px;
   }
 }
