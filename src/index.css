@@ -19,10 +19,11 @@
 } */
 body {
   width: 100%;
-  /* bỏ fixed + background để không chiếm full web */
   display: block;
   min-height: auto;
   position: relative;
+  min-height: 100vh;
+
   background: none !important;
 }
 .chatbot-popup {
@@ -43,9 +44,19 @@ body {
   cursor: pointer;
   border-radius: 50%;
   background: #061a75;
+  box-shadow: 0 0 8px #fff;
   align-items: center;
   justify-content: center;
   transition: all 0.2s ease;
+}
+#chatbot-toggler:hover {
+  background: #fff;
+  transform: scale(1.05);
+  box-shadow: 0 0 8px #061a75;
+}
+#chatbot-toggler:hover span {
+  position: absolute;
+  color: #061a75;
 }
 
 #chatbot-toggler span {
@@ -355,3 +366,61 @@ body {
     padding: 10px 12px;
   }
 }
+.chatbot-button {
+  position: relative;
+  cursor: pointer;
+  background: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  padding: 10px;
+}
+
+.chatbot-tooltip {
+  position: absolute;
+  top: 50%;
+  left: -210px;
+  transform: translateY(-50%);
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.5s ease;
+  gap: 6px;
+  text-align: left;
+}
+
+.chatbot-button:hover .chatbot-tooltip {
+  opacity: 1;
+}
+
+.chatbot-tooltip-arrow {
+  position: absolute;
+  top: 50%;
+  right: -10px;
+  transform: translateY(-50%);
+  width: 0;
+  height: 0;
+  border-top: 8px solid transparent;
+  border-bottom: 8px solid transparent;
+  border-left: 10px solid #fff;
+}
+@keyframes wave {
+  0% { transform: rotate(0deg); }
+  15% { transform: rotate(15deg); }
+  30% { transform: rotate(-10deg); }
+  45% { transform: rotate(15deg); }
+  60% { transform: rotate(-5deg); }
+  75% { transform: rotate(10deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.wave-hand {
+  display: inline-block;
+  animation: wave 2s infinite;
+  transform-origin: 70% 70%; /* điểm xoay */
+}
+

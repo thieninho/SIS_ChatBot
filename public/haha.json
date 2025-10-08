@@ -1,0 +1,878 @@
+    [
+    {
+        "question": "What is the Datalogic Matrix 220 and what is it used for?",
+        "answer": "The Matrix 220 is a compact, industrial image‑based barcode reader (1.2 MP global‑shutter sensor) designed for high‑performance decoding of 1D, 2D, stacked and postal codes, including challenging Direct Part Mark (DPM) applications across electronics, automotive, packaging and document handling lines. It integrates flexible illumination, electronic focus, rugged IP65/IP67 housing, and on‑board Ethernet/Fieldbus connectivity. "
+    },
+    {
+        "question": "List 5 standout features of the Matrix 220.",
+        "answer": "• 1.2 MP (960×1280) sensor with up to 45 fps • Electronic software‑controlled focus • Powerful internal illumination (white/red/blue; polarized/diffused; High‑Power variants) • On‑board Ethernet with EtherNet/IP, PROFINET IO, Modbus TCP, OPC UA • X‑PRESS one‑button setup with LEDs and green/red spot feedback. "
+    },
+    {
+        "question": "What model families are available for Matrix 220?",
+        "answer": "Models include Standard White (STD), DPM Red/Blue (DPM), High Power Illuminator versions (HP), UV model (3U2‑01U), and Power over Ethernet (PoE) variants. Not all combinations exist; see the product page for full list. "
+    },
+    {
+        "question": "Give examples of Matrix 220 part numbers and their meaning.",
+        "answer": "Examples: 937900037 – 1.2MP DPM‑R 12mm (X series); 937900042 – 1.2MP DPM‑B 12mm (X series); 937900017 – 1.2MP STD‑R 7mm HP (Digimarc capable); 937900002 – 1.2MP STD‑W 7mm PoE (legacy). Suffixes indicate optics (7/12 mm), illuminator color (R/B/W/UV), and HP/PoE/ESD options. "
+    },
+    {
+        "question": "Who is allowed to install the reader and what power sources are allowed?",
+        "answer": "Installation is intended for qualified personnel only. Use a UL Listed LPS/Class 2 supply (10–30 Vdc) or a UL Listed PoE source per IEEE 802.3af; PoE or direct plug‑in Class 2 supplies are acceptable. "
+    },
+    {
+        "question": "What is the LED safety classification for Matrix 220 models?",
+        "answer": "All models are Risk Group 0 per IEC/EN 62471, except Matrix 220 3U2‑01U which is Risk Group 3 for blue/UV light considerations; its near‑UV exposure complies with 2006/25/EC only at ≥370 mm distance. "
+    },
+    {
+        "question": "What are the main steps for rapid configuration without deep PC use?",
+        "answer": "1) Connect the system; 2) Mount/position; 3) Aim & Autofocus; 4) Use X‑PRESS (Aim/Setup/Learn); 5) Install DL.CODE (if needed); 6) Configure device (image/code, outputs); 7) Test Mode. "
+    },
+    {
+        "question": "How does the Aim/Autofocus routine work via X‑PRESS?",
+        "answer": "Hold the button until Aim LED lights, release to start. The aimer turns on and autofocus runs; center a large code and keep it steady. On success the reader stores Reading Distance/PPI, Aim LED stops blinking and 3 high‑pitched beeps sound; timeout ~3 minutes emits a long low beep with no save. "
+    },
+    {
+        "question": "What are Auto‑Learn limitations from X‑PRESS/BM150?",
+        "answer": "Auto‑Learn via X‑PRESS/BM150 configures only a single code per run; subsequent Learns overwrite the prior one. It doesn’t recognize Pharmacode, MSI, Standard 2 of 5, or Matrix 2 of 5. Use DL.CODE Auto‑Learn for multiple symbologies. "
+    },
+    {
+        "question": "What functions are available on the X‑PRESS interface?",
+        "answer": "Test (bar‑graph Good Read rate), Aim/Autofocus (turn on pointers/run autofocus), Setup (exposure/gain calibration), and Learn (auto‑detect and configure one presented code). LEDs and beeper provide feedback. "
+    },
+    {
+        "question": "How do I interpret the Test Mode bar graph LEDs?",
+        "answer": "The five LEDs form a Good Read Rate bar graph at ~20%, 40%, 60%, 75%, 95% levels. If No Read, only STATUS (red) blinks. Test auto‑exits after ~3 minutes. "
+    },
+    {
+        "question": "What mounting angles are recommended for typical labels?",
+        "answer": "Aim for Pitch or Skew of 10°–20° and Tilt ≈ 0°, while ensuring the code fits within the field of view. Maintain at least ~10° Skew to avoid direct reflections. "
+    },
+    {
+        "question": "How do I estimate the Field of View (FOV) at a given distance?",
+        "answer": "Use: FOVx = 2·((d + d0)·tan(ax/2)), where d is reading distance from window, d0 is lens‑to‑window offset, and ax is the relevant viewing angle (H/V/Diag). Example for 12 mm lens at 200 mm: FOV_H ≈ 87 mm, FOV_V ≈ 65 mm. "
+    },
+    {
+        "question": "Any constraints when using flexible power/Ethernet cables?",
+        "answer": "Clamp Matrix 220 flexible cables ≥245 mm from the reader on a rigid frame; observe dynamic specs (e.g., linear chain up to 10 m/s, 10 m/s², Rmin 80 mm; 3D e‑chain ±180°/s, 60°/s², Rmin 105 mm, 5M cycles). PoE models support Ethernet‑only flexible cable configs. "
+    },
+    {
+        "question": "What are the power requirements for standard vs PoE models?",
+        "answer": "Standard models: 10–30 Vdc via CBX Vdc/GND. PoE models: IEEE 802.3af via M12 X‑coded, power on data pairs (Alt A/B). Tie chassis/earth per EMC guidance. "
+    },
+    {
+        "question": "Which main serial interfaces are supported and when to use them?",
+        "answer": "RS232 for short point‑to‑point; RS422 full‑duplex for longer runs/noisy environments (up to ~1200 m). Both selectable with standard baud/parity/stop settings via DL.CODE. "
+    },
+    {
+        "question": "What should I do with unused RS422 RX lines if I only transmit to the host?",
+        "answer": "Do not leave RX+ and RX‑ floating; tie them to SGND as shown in the manual to prevent damage/noise. "
+    },
+    {
+        "question": "Name key CBX terminal groups and any grounding cautions.",
+        "answer": "Groups: Input Power (Vdc/GND/Earth), Inputs (I1/I2 with +V/‑V), Outputs (O1/O2 opto‑isolated, O3 on CBX500), Auxiliary RS232 (TX/RX/SGND), ID‑NET (REF/ID+/ID‑/Shield), Main Interface (RS232/RS422). Do not connect GND, SGND and REF to different external grounds; drops >0.8 V can damage filtering. "
+    },
+    {
+        "question": "How are External Trigger and Input 2 implemented?",
+        "answer": "Two opto‑coupled, polarity‑insensitive inputs (I1 External Trigger, I2 general). Active state and debounce set in software; compatible with NPN/PNP. Typical limits: up to 30 Vdc, reader 10 mA + CBX up to 12 mA. "
+    },
+    {
+        "question": "What are default output assignments and electrical traits?",
+        "answer": "By default O1=No Read, O2=Good Read; O3 unassigned (CBX500 required). Via CBX, O1/O2 become opto‑isolated and polarity‑sensitive; set Line Type accordingly (NPN). Electrical: up to 30 Vdc, 40 mA continuous (O1/O2), 100 mA (O3). "
+    },
+    {
+        "question": "Any caveats using I/O on PoE models without CBX?",
+        "answer": "On PoE models the internal Digital Output circuitry on the 17‑pin is unpowered (Vdc=0). Only input signals are accepted directly; for I/O devices, route through a separately powered CBX. "
+    },
+    {
+        "question": "Which protocols are available on the on‑board Ethernet?",
+        "answer": "TCP Client/Server, UDP, FTP Client, plus Fieldbuses: EtherNet/IP, PROFINET IO, Modbus TCP. IoT: OPC UA server. "
+    },
+    {
+        "question": "How can I discover devices and set IP addresses?",
+        "answer": "Use DL.CODE discovery to list devices and set static IP/Mask/Gateway, or use Web Discovery at http://datalogic.local/ to reach devices (at least one must be on your subnet). "
+    },
+    {
+        "question": "Does the Matrix 220 support OPC UA and what can it do?",
+        "answer": "Yes. It implements the AutoID Companion Spec and Device Info Model, exposing methods like ScanStart and ScanStop. Enable server in DL.CODE and optionally set username/password under Security Settings. "
+    },
+    {
+        "question": "Name example OPC UA clients compatible with Matrix 220.",
+        "answer": "UAExpert (Unified Automation) and dataFeed OPC UA Client (Softing), as well as any client using standard OPC UA SDKs per the AutoID spec. "
+    },
+    {
+        "question": "What Ethernet connection topologies are supported?",
+        "answer": "Point‑to‑point to a host PC, or via a LAN (switch). PoE network layouts are supported with PoE switches. Multiple output channels (e.g., monitoring) are always available. "
+    },
+    {
+        "question": "What is a Pass‑through layout and when do I use it?",
+        "answer": "Readers operating Alone can forward their own decoded data plus one or more pass‑through input channels to another device, which aggregates and forwards to the Host. Useful for multi‑device networks without full ID‑NET synchronization. "
+    },
+    {
+        "question": "How does an ID‑NET Multidata network work?",
+        "answer": "Slaves (Alone) send their own data on ID‑NET to a Master, which forwards to host via another channel. Each slave has address 1–31; Master aggregates via pass‑through. Operating modes can differ per device. "
+    },
+    {
+        "question": "What characterizes an ID‑NET Synchronized network?",
+        "answer": "One Master + up to 31 Slaves share a single External Trigger/reading phase; Master operating mode is PackTrack or Phase Mode only. A single consolidated message is sent to host; trigger need not be wired to every reader. "
+    },
+    {
+        "question": "What does HDR do and when to use it?",
+        "answer": "High Dynamic Range enhances low‑intensity pixels, improving contrast and readability—especially with skewed illumination, DPM illuminators at short distances, mixed‑contrast scenes, and to reduce exposure time for higher line speeds. "
+    },
+    {
+        "question": "What are guidelines for the UV fluorescence model?",
+        "answer": "Model 3U2‑01U uses 365 nm High‑Power UV LEDs and a 415 nm long‑pass filter. Choose inks excited at ~365 nm; emissions are weak, so use higher Gain Multiplier (dynamic: Very High Power lighting; static: High‑Power‑Strobed). Observe Risk Group 3 distance note. "
+    },
+    {
+        "question": "How do you compute maximum line speed for a given exposure and code resolution?",
+        "answer": "Avoid blur when LS·Texp ≤ X. Thus LS_max ≈ X / Texp. Example: X=0.254 mm (10 mil), Texp=100 μs ⇒ LS_max≈2540 mm/s. High‑Power models often halve Texp (double speed). "
+    },
+    {
+        "question": "Are there reference reading diagrams for 1D/2D codes?",
+        "answer": "Yes—typical performance diagrams at 25 °C for 7 mm and 12 mm lenses across various code resolutions/symbologies are provided; test with your actual codes for optimal HW/SW tuning. "
+    },
+    {
+        "question": "When should I use Automatic Setup vs Manual Setup?",
+        "answer": "Automatic Setup quickly tunes optical/illumination and code parameters (Standard or DPM algorithms) for simple cases. Use Manual Setup when you need multiple symbologies, multiple Image Settings, code grading, or finer control. "
+    },
+    {
+        "question": "How do I handle moving codes in Automatic Setup?",
+        "answer": "Choose Dynamic in Advanced Options and set Max Line Speed and Code Resolution so the algorithm compensates for motion blur during tuning. "
+    },
+    {
+        "question": "What are Multi Image Acquisition Settings and how are they selected?",
+        "answer": "You can define up to 10 Image Settings for different controlled conditions (lighting, distance). Selection can be Automatic (cycle through; optionally start from Last Successful) or External (activate specific sequences via string or digital input). "
+    },
+    {
+        "question": "What does Image Cropping do?",
+        "answer": "It reduces the processed area to a defined window (by pixels or drag‑resize), increasing frame rate/throughput and decoding speed when codes are localized. "
+    },
+    {
+        "question": "Which code quality standards are supported for trending?",
+        "answer": "Code quality metrics per ISO/IEC 16022 (Data Matrix), ISO/IEC 18004 (QR), ISO/IEC 15415 (2D), ISO/IEC 15416 (1D), and AIM DPM are supported for trending/monitoring. "
+    },
+    {
+        "question": "What internal illumination options exist across models?",
+        "answer": "Standard models: 4 white LEDs; Standard HP: 8 LEDs (2× power); DPM models: selectable Non‑Polarized, Polarized, and Diffused (red/blue); DPM HP: higher‑power polarized/non‑polarized red. "
+    },
+    {
+        "question": "How does code position vs illuminator affect DPM readability?",
+        "answer": "Glare from top/bottom diffused or non‑polarized sources can mask the code if centered; positioning the code near top/bottom/left/right of FoV or choosing polarized light often mitigates glare and restores readability. "
+    },
+    {
+        "question": "When should I choose red vs blue DPM illuminators?",
+        "answer": "Choose the illuminator color that maximizes contrast with the printed color/background: generally same‑color light brightens that color while opposite color darkens it (e.g., red light improves contrast for blue codes and vice versa). "
+    },
+    {
+        "question": "Which image pre‑filters can help with low‑quality DPM codes?",
+        "answer": "Filters include Erode, Dilate, Close, Open, Contrast Stretching/Enhancement, Histogram Equalization, Smoothing, Sharpening, Deblurring, Black/White Enhancement—applied per Image Setting to improve localization/decoding. "
+    },
+    {
+        "question": "How do I back up and restore configurations with DL.CODE?",
+        "answer": "Use Device > Backup/Restore: backup to PC file (optionally include firmware) or to external BM100. For ID‑NET, choose the Internal Network options. Restore supports same part‑number devices only. "
+    },
+    {
+        "question": "What’s the default IP and how do the default resets differ?",
+        "answer": "Default static IP is 192.168.3.100. ‘Restore Default Startup Configuration’ selects the immutable Default job; ‘Restore Default Environment’ resets environment (IP, network roles); ‘Restore Factory Defaults’ erases all jobs and restores factory settings. "
+    },
+    {
+        "question": "What can the BM150 Display Module do when attached to CBX500?",
+        "answer": "BM150 mirrors the HMI (Test, Focus, Calibration, Code Setting), shows results/diagnostics/Reading Mask, and manages Backup/Restore via BM100. Enable BM100 detection in DL.CODE; some functions are disabled when connected to DL.CODE. "
+    },
+    {
+        "question": "Any maintenance recommendations?",
+        "answer": "Periodically clean the window with soft material and alcohol; avoid abrasives. Keep mounting robust to handle vibration/shock; avoid welding or spray painting near the reader to protect the window and electronics. "
+    },
+    {
+        "question": "Power LED is off—what should I check?",
+        "answer": "Verify supply presence at M12 17‑pin (1=Vdc, 2=GND) or CBX Vdc/GND, adapter/supply power, CBX switch/LEDs, and measure voltage. "
+    },
+    {
+        "question": "Trigger LED doesn’t blink in One Shot/Phase—what to inspect?",
+        "answer": "Confirm wiring to I1/I2 (A/B), sensor power and type (PNP/NPN), debouncing in DL.CODE, and Acquisition/Reading Phase ON/OFF source settings. "
+    },
+    {
+        "question": "In Phase Mode the trigger blinks but no image appears—why?",
+        "answer": "Phase frequency may exceed the max frame rate; reduce phase frequency or exposure/processing load, and verify acquisition timing. "
+    },
+    {
+        "question": "Reader always returns No Read—how to proceed?",
+        "answer": "Re‑run Rapid Configuration, re‑position per mounting guidance, tune Acquisition Delay, switch to Continuous mode if no trigger, optimize Image Settings, verify symbology parameters, and inspect actual code print quality at full resolution. "
+    },
+    {
+        "question": "Summarize key electrical specs (power, I/O limits).",
+        "answer": "Standard power 10–30 Vdc (consumption varies by model); PoE 48 Vdc (802.3af). Inputs opto‑coupled up to 30 Vdc; outputs short‑circuit protected (O1/O2 via CBX opto‑isolated 30 V/40 mA; O3 up to 100 mA). Serial 2400–115200 bps; Ethernet 10/100 Mb. "
+    },
+    {
+        "question": "Summarize key optical specs (sensor, lenses, DOF).",
+        "answer": "CMOS global shutter 1.2 MP, 45 fps; lenses 7 mm (38° H FOV) and 12 mm (24° H FOV), min distance ~40 mm; aiming LEDs; internal illuminators per model; max distances typically 300–600 mm depending on model. "
+    },
+    {
+        "question": "What are the environmental ratings?",
+        "answer": "Operating −10 to 50 °C (model‑dependent), storage −20 to 70 °C, 90% RH non‑condensing, IP65/IP67 with proper cabling (IP64 with ESD/YAG covers), shock/vibration per EN 60068; sulfur gas tested (EN 60068‑2‑43). "
+    },
+    {
+        "question": "What is the EBC Connection Module and when is it applicable?",
+        "answer": "An accessory that lets Matrix readers join an Ethernet‑Based Connectivity (EBC) ring with SC5100 controllers (alongside laser scanners). Not supported by some X‑series models; see manual. "
+    },
+    {
+        "question": "Outline the basic wiring/LEDs for the EBC module.",
+        "answer": "Connect PWR IN (24 Vdc), pigtail to Matrix, EBC1/EBC2 Ethernet ring ports, and optional EXT ILL (strobe). Blue LEDs indicate power; orange blink indicates link activity on EBC ports. Ensure frame is earthed. "
+    },
+    {
+        "question": "How do I terminate an ID‑NET network?",
+        "answer": "Set the 120 Ω termination at the first and last node (via CBX switch/terminators or QL connectors). Cable shield connects to earth only at the Master; don’t use shield as common reference. Max cable length depends on baudrate (e.g., 700 m @ 500 kbps). "
+    },
+    {
+        "question": "List EMC grounding best practices for Matrix 220.",
+        "answer": "Bond chassis to plant earth with short (<100 mm) flat braid; on CBX connect Earth terminal to good ground; for direct M12, bond cable shield to connector ring nut; avoid multi‑grounding GND/SGND/REF. "
+    },
+    {
+        "question": "How do I create AND/XOR combinations of expected codes in DL.CODE?",
+        "answer": "In Good Read Setup, multiple Expected Codes default to logical AND. To use XOR, drag code icons into the same XOR box and delete empty boxes; to revert to AND, add a new box and drag codes accordingly. "
+    },
+    {
+        "question": "How do I format output messages?",
+        "answer": "Under Data Formatting, add fields (e.g., code content, separators, terminators) and reorder by drag‑drop. Configure multiple messages (Message 1, 2, …) and map to channels/outputs as needed. "
+    },
+    {
+        "question": "When would I choose PackTrack vs Phase Mode on a synchronized network?",
+        "answer": "Both are Master‑only operating modes for synchronized ID‑NET. Use Phase Mode for discrete triggered acquisitions; PackTrack when items are closely spaced with encoded position tracking to associate reads with items. "
+    },
+    {
+        "question": "What is the standard warranty period and key exclusions?",
+        "answer": "Two years from Datalogic shipment under normal use; excludes misuse, unauthorized modifications, disasters, consumables (cables, PSUs, batteries), serial‑number‑tampered devices, and non‑restoring actions (e.g., failed upgrades). See Terms & Conditions for full details. "
+    },
+    {
+        "question": "What is DL.CODE software?",
+        "answer": "DL.CODE software is a User Interface Client Application that provides reading device configuration for Stand Alone and Master/Slave configurations."
+    },
+    {
+        "question": "What operating system is DL.CODE installed on and runs on?",
+        "answer": "It is installed in and runs on Windows-based PCs (usually laptops), and connection takes place through an Ethernet TCP/IP interface."
+    },
+    {
+        "question": "What is the primary function of the DL.CODE software?",
+        "answer": "The primary function is to provide reading device configuration, visual monitoring of images, PackTrack Calibration, and statistic/diagnostic information."
+    },
+    {
+        "question": "Which software version does this manual refer to?",
+        "answer": "This manual refers to software version 2.0.0 and later."
+    },
+    {
+        "question": "What is the consequence if an End User does not agree with the terms of the EULA?",
+        "answer": "If the End User does not agree with all of the terms of this agreement, Datalogic is not willing to license the software, and the End User is not allowed to download, install, or use the Software or the Datalogic product."
+    },
+    {
+        "question": "What kind of license does Datalogic grant to the End User for the Software?",
+        "answer": "Datalogic grants a personal, non-exclusive, non-transferable, non-sublicensable, revocable, limited license to use the Software."
+    },
+    {
+        "question": "For what purpose can the Software be used according to the EULA?",
+        "answer": "The Software can be used for reading device's configuration, monitoring, and diagnostic exclusively in conjunction with Datalogic automated data capture devices for which it is intended for use, solely for the End User's internal business purposes."
+    },
+    {
+        "question": "What action is prohibited regarding the Software's inner workings?",
+        "answer": "The End User shall not modify, translate, decompile, reverse engineer, disassemble, or extract the inner workings of the Software."
+    },
+    {
+        "question": "What Datalogic products are mentioned as trademarks besides Datalogic and its logo?",
+        "answer": "DL.CODE, ID-NET, and X-PRESS are trademarks of Datalogic S.p.A. and/or its affiliates."
+    },
+    {
+        "question": "What are the minimum Software Requirements for installing DL.CODE?",
+        "answer": "The PC must be running Windows 8 or Windows 10 (32 or 64-bit) and have a web browser like Google Chrome, Mozilla Firefox, or Microsoft Internet Explorer."
+    },
+    {
+        "question": "Where is the DL.CODE entry created after a Standard Installation?",
+        "answer": "The DL.CODE entry is created in the Start > Programs bar under “Datalogic” as well as a desktop icon."
+    },
+    {
+        "question": "What window do you return to by selecting 'Getting Started' from the Main Menu?",
+        "answer": "Selecting 'Getting Started' returns to the initial Device Discovery window to load a different device."
+    },
+    {
+        "question": "What are the two main groups of Decoding Configuration parameters?",
+        "answer": "The Decoding Configuration parameters are divided into Automatic Setup and Manual Setup."
+    },
+    {
+        "question": "What is the purpose of the 'Wink' icon in the Device List Area?",
+        "answer": "The 'Wink' icon allows the user to make the selected device on the list flash its LED to quickly identify its physical location."
+    },
+    {
+        "question": "What can you configure using the 'UI Settings' option in the Main Menu?",
+        "answer": "You can configure console presentation, Image Buffer positioning and behavior, Simulator Settings, and select which features to enable for viewing. The Monitor can also be configured."
+    },
+    {
+        "question": "What are the three User Levels for configuration access in DL.CODE?",
+        "answer": "The three User Levels are Basic User (no parameters modification allowed), Basic-Installer (medium level of parameter modification allowed), and Expert-Installer (maximum level of parameter modification allowed)."
+    },
+    {
+        "question": "How can Image Cropping help improve performance?",
+        "answer": "Image cropping allows reducing the Image processing area from the full Field of View (FoV) to a smaller area where codes are present, thereby reducing processing time."
+    },
+    {
+        "question": "What feature can be used if the user doesn't know the code type in their application?",
+        "answer": "The user can use the Code Autolearn feature by clicking on the Autolearn icon."
+    },
+    {
+        "question": "What are the four application-specific Operating Modes that can be selected?",
+        "answer": "The application-specific Operating Modes are Continuous, One Shot, Phase Mode, or PackTrack."
+    },
+    {
+        "question": "What is the default action when a fieldbus signal activates multiple events with the same edge?",
+        "answer": "If the same signal activates multiple events with the same edge, those events are fired in a random order."
+    },
+    {
+        "question": "What does the 'Test Mode' feature allow the user to do?",
+        "answer": "Test Mode allows you to test the reading performance of your system."
+    },
+    {
+        "question": "Where is the configuration saved when entering Test Mode?",
+        "answer": "When entering Test Mode, the configuration is saved in Temporary Memory."
+    },
+    {
+        "question": "What is the default naming syntax for an image downloaded from the Web Monitor?",
+        "answer": "The default naming syntax is `image_weekday month day year.jpg` (e.g., image_Wed Jan 23 2019.jpg)."
+    },
+    {
+        "question": "What is 'Code Collection' mode?",
+        "answer": "In Code Collection mode, the reader can collect several codes before providing a single output result."
+    },
+    {
+        "question": "In Code Collection mode, what happens if the Multiple Read parameter is Disabled and the number of codes read exceeds the maximum expected codes?",
+        "answer": "If the Multiple Read parameter is Disabled, the reading is considered a Good Read (Case 3), and the content of Message 1 Success is sent to the Host containing the first maximum decoded codes."
+    },
+    {
+        "question": "What is the determining factor for the output result in 'Code Combination' mode?",
+        "answer": "In Code Combination mode, the output results sent to the Host depend not only on the codes read but on meeting their configured logical combination criteria."
+    },
+    {
+        "question": "What are the three main components of the OUTPUT MESSAGE in standard message formatting?",
+        "answer": "The general format of the OUTPUT MESSAGE is: `<HEADER><RESULTS><TERMINATOR>`."
+    },
+    {
+        "question": "What is the purpose of Independent Diagnostic Messages?",
+        "answer": "As a troubleshooting tool or for error monitoring, a Diagnostic Message can be sent independently from the code reading message."
+    },
+    {
+        "question": "What type of engine is the Script Formatter based on?",
+        "answer": "The Script Formatter is based on an embedded JavaScript engine."
+    },
+    {
+        "question": "Which ECMAScript Language Specification does the embedded JavaScript engine conform to (for DL.CODE 1.5.0 and later)?",
+        "answer": "It conforms to the ECMAScript 5.0/5.1 Language Specification."
+    },
+    {
+        "question": "What is the 'Reading Mask' used for in Master/Slave synchronized configuration troubleshooting?",
+        "answer": "The Reading Mask can be temporarily applied in place of each Code Content field to verify if all devices (Master and Slaves) are reading."
+    },
+    {
+        "question": "How is the Reading Mask string structured in an ID-NET network?",
+        "answer": "The mask is composed of a fixed 32-character string (0=No Read or 1=Read) representing the 32 possible readers in an ID-NET network."
+    },
+    {
+        "question": "By default, where is the Master device represented in the Reading Mask string?",
+        "answer": "By default, the Master is the last character in the string."
+    },
+    {
+        "question": "What are the two types of Auto-Setup algorithms mentioned in Decoding Configuration?",
+        "answer": "The two types are Standard Automatic Setup (available on all products) and DPM Automatic Setup (available on M220X / XP, M320X and M220X-AI)."
+    },
+    {
+        "question": "What is the DPM Automatic Setup recommended for?",
+        "answer": "It is recommended for reading difficult-to-read 2D codes on Direct Part Marking (DPM) applications."
+    },
+    {
+        "question": "What must be done to ensure Online devices are found by DL.CODE?",
+        "answer": "Online devices must be powered on and connected to the Local Area Network (LAN)."
+    },
+    {
+        "question": "What are 'NOTE' conventions used for in the manual?",
+        "answer": "NOTE: Notes contain information necessary for properly diagnosing, repairing and operating the reader."
+    },
+    {
+        "question": "What does the 'CAUTION' symbol advise the user of?",
+        "answer": "CAUTION: This symbol advises you of actions that could damage equipment or property."
+    },
+    {
+        "question": "What does the 'WARNING' symbol advise the user of?",
+        "answer": "WARNING: This symbol advises you of actions that could result in harm or injury to the person performing the task."
+    },
+    {
+        "question": "What is the purpose of the 'Web Monitor' feature?",
+        "answer": "Web Monitor allows the user to monitor images, statistics, diagnostic alarms, and edit Matrix reader settings via a web browser."
+    },
+    {
+        "question": "What is the purpose of the 'Stop/Play' button on the Monitoring Page of the Web Monitor?",
+        "answer": "The Stop/Play button allows you to stop image monitoring to save a particular image, while the reader continues to run."
+    },
+    {
+        "question": "What is the function of the 'Save' icon in the Main Menu/Toolbar?",
+        "answer": "The 'Save' function saves the current configuration to the device memory or to a .dlcfg file selected from a disk/directory of your choice."
+    },
+    {
+        "question": "What is the function of 'Code Presentation' data collection method?",
+        "answer": "In Code Presentation mode, a successful reading of a sequence of codes is required for a successful result."
+    },
+    {
+        "question": "What is the function of 'Match Code' data collection method?",
+        "answer": "In Match Code mode, the output message is determined by matching a specific code pattern, which is usually a code content, against a configured string list."
+    },
+    {
+        "question": "What is the function of 'User Defined' data collection method?",
+        "answer": "User Defined mode allows a highly customizable, flexible method for combining multiple codes to achieve a desired result."
+    },
+    {
+        "question": "What are the two types of image buffers mentioned in the Image Saving chapter?",
+        "answer": "The two types are the Device Image Buffer and the UI Image Buffer."
+    },
+    {
+        "question": "What is 'Pass-through Configuration' used for?",
+        "answer": "Pass-through Configuration can be used to monitor and configure Slave devices directly without changing the Master's configuration."
+    },
+    {
+        "question": "What is 'Internal Network Configuration' used for?",
+        "answer": "Internal Network Configuration manages devices connected via Datalogic's proprietary ID-NET network, typically in a Master/Slave setup."
+    },
+    {
+        "question": "What function is used to automatically recognize connected ID-NET Slaves when configuring a Master device?",
+        "answer": "The Net Auto-set feature is performed during the Setup Internal Network process."
+    },
+    {
+        "question": "What is the main difference between Symbol Verification and Code Grading?",
+        "answer": "Symbol Verification is a simple go/no-go quality check, while Code Grading performs a detailed quality analysis based on international standards."
+    },
+    {
+        "question": "What is the Code Quality Index?",
+        "answer": "The Code Quality Index is a feature that provides quality information for each code (1D or 2D) decoded by the reader."
+    },
+    {
+        "question": "Which international standards are applied to Code Grading?",
+        "answer": "The standards include ISO/IEC 16022 and ISO/IEC 18004 (2D), ISO/IEC TR 29158 (AIM DPM 2006) (DPM), ISO/IEC 15415 (2D), and ISO/IEC 15416 (1D)."
+    },
+    {
+        "question": "What does ANU stand for in Code Grading parameters?",
+        "answer": "ANU stands for Axial Non-Uniformity."
+    },
+    {
+        "question": "What does UEC stand for in Code Grading parameters?",
+        "answer": "UEC stands for Unused Error Correction."
+    },
+    {
+        "question": "What is SC in the context of ISO/IEC 16022 Code Quality Scan Grade Parameters?",
+        "answer": "SC stands for Symbol Contrast."
+    },
+    {
+        "question": "Which Code Quality Scan Grade parameters are specific to the ISO/IEC TR 29158 (AIM DPM 2006) guideline?",
+        "answer": "Parameters include Cell Contrast (CC), Cell Modulation (CM), Fixed Pattern Damage (FPD), Grid Non-Uniformity (GNU), and Minimum Reflectance (MR)."
+    },
+    {
+        "question": "What is the purpose of the 'Comparator' feature in DL.CODE?",
+        "answer": "The Comparator feature allows the user to compare two different configuration files (.dlcfg) to highlight the differences between them."
+    },
+    {
+        "question": "What does the 'Update Package' chapter deal with?",
+        "answer": "The 'Update Package' chapter deals with updating the device firmware."
+    },
+    {
+        "question": "What are the four 'Restore Defaults' options available in DL.CODE?",
+        "answer": "The four options are Restore Defaults, Restore Default Startup Configuration, Restore Default Environment, and Restore Factory Defaults."
+    },
+    {
+        "question": "What does restoring the 'Default Environment' do?",
+        "answer": "Restoring the Default Environment restores device network and communication parameters to their factory settings."
+    },
+    {
+        "question": "What is the function of the 'Software Reset' option?",
+        "answer": "Software Reset performs a complete reset of the device software, effectively restarting the device."
+    },
+    {
+        "question": "What are the Image Filtering options available in DL.CODE?",
+        "answer": "Image Filtering options include general image filters and DPM algorithms."
+    },
+    {
+        "question": "What is the goal of a DPM algorithm in image filtering?",
+        "answer": "The goal of DPM algorithms is to increase code decoding probability on low-contrast, Direct Part Marking surfaces."
+    },
+    {
+        "question": "How are fieldbus Input/Output signals represented in DL.CODE?",
+        "answer": "Fieldbus Input/Output is represented using Digital I/O Conditioning settings for input and output control."
+    },
+    {
+        "question": "What is 'Digital Input Echo to Fieldbus'?",
+        "answer": "It is a feature where the Fieldbus Master can receive the Matrix Reading Phase and Input signal echoes by assigning them as sources to the Fieldbus individual communication Output Bit Activation and Deactivation parameters."
+    },
+    {
+        "question": "How can an End User download electronic versions of the documentation?",
+        "answer": "Electronic versions of this document may be downloaded from the Datalogic website (www.datalogic.com)."
+    },
+    {
+        "question": "What type of information do 'Statistics' provide in the Monitor?",
+        "answer": "Statistics provide information related to the device's reading performance, such as decode rate and throughput."
+    },
+    {
+        "question": "What type of information do 'Diagnostic Alarms' provide in the Monitor?",
+        "answer": "Diagnostic Alarms monitor and signal critical operational events and errors related to the device."
+    },
+    {
+        "question": "What can be configured in the 'Statistics Settings' window?",
+        "answer": "In the Statistics Settings window, you can set the time interval for statistics calculation and the type of statistics to display."
+    },
+    {
+        "question": "What is the function of the 'View Window' in the Monitor Images Options?",
+        "answer": "The View Window allows the user to display the monitored images in a separate, customizable window."
+    },
+    {
+        "question": "How can images be saved on demand using the HMP command?",
+        "answer": "Images can be saved On Demand Using the Send Images HMP Command."
+    },
+    {
+        "question": "What is 'Multi Image Acquisition Settings'?",
+        "answer": "Multi Image Acquisition Settings allow grouping multiple image settings (with different parameters) into sequences to be triggered by a single event."
+    },
+    {
+        "question": "What does the 'Code Object' reference contain in the Script Formatter?",
+        "answer": "The Code Object reference contains code-related information, such as symbology, content, and quality metrics."
+    },
+    {
+        "question": "Which object in the Script Formatter allows access to device global reading statistics?",
+        "answer": "The Statistics Object allows access to device global reading statistics."
+    },
+    {
+        "question": "Which object in the Script Formatter allows access to device diagnostic information?",
+        "answer": "The Diagnostics Object allows access to device diagnostic information."
+    },
+    {
+        "question": "What does the 'Protocol Index' feature allow the user to do?",
+        "answer": "The Protocol Index allows the user to include an index of the protocol used for communication in the output message, which is useful for complex communication setups."
+    },
+    {
+        "question": "What is 'Field Length Management' used for in Message Formatting?",
+        "answer": "Field Length Management is used to define the fixed or variable length of the fields within the output message."
+    },
+    {
+        "question": "What is the function of the 'Field Separator' in Message Formatting?",
+        "answer": "The Field Separator defines a character or string to be inserted between fields in the output message."
+    },
+    {
+        "question": "What are the configuration options for Code Collection's Analysis in Phase Mode?",
+        "answer": "The Analysis can be set to Within Phase (single result per phase) or Within An Image (result after each image decoding)."
+    },
+    {
+        "question": "In Code Collection mode, what does 'No Read' being Enabled allow?",
+        "answer": "When 'No Read' is Enabled, a specific 'Message 2 Failure' (No Read message) can be sent to the host if the minimum expected codes criteria is not satisfied."
+    },
+    {
+        "question": "In Code Combination mode, how is a 'Partial Read' treated by default?",
+        "answer": "By default, a Partial Read is treated as a No Read."
+    },
+    {
+        "question": "What is the purpose of 'Image Cropping' from the Manual Setup tab?",
+        "answer": "Image Cropping is performed from both Manual and Automatic Setup tab by clicking on the Add Cropping Region icon to reduce the image processing area."
+    },
+    {
+        "question": "What is the default size of the blue border that appears after clicking the 'Add Cropping Region' icon?",
+        "answer": "The blue border that appears by default is equal to the Field of View (FoV)."
+    },
+    {
+        "question": "What is the purpose of PackTrack Calibration?",
+        "answer": "DL.CODE provides PackTrack Calibration for omnidirectional reading and tracking stations used in Logistics applications."
+    },
+    {
+        "question": "Where can users download Data Sheets, Manuals, Software & Utilities, and Drawings?",
+        "answer": "These documents can be downloaded from the Datalogic website (www.datalogic.com) via the search function."
+    },
+    {
+        "question": "What should the End User do if the Agreement terminates for any reason?",
+        "answer": "The End User's license to use the Software will immediately terminate, and they must immediately stop using the Software, destroy all copies, and provide an affidavit certifying compliance upon request."
+    },
+    {
+        "question": "What is Datalogic's entire liability for any breach of the limited warranty for the Software?",
+        "answer": "Datalogic's entire liability and the End User's sole and exclusive remedy will be, at Datalogic's option, the provision of a downloadable patch or replacement software."
+    },
+    {
+        "question": "What is the maximum limit of Datalogic's liability for damages under the EULA?",
+        "answer": "In no event shall Datalogic's liability for damages exceed the price or fee paid by the End User for the Datalogic product."
+    },
+    {
+        "question": "For users in the Americas, which state's laws govern the EULA?",
+        "answer": "For licenses granted by Licensees who operate in the Americas, this Agreement is governed by the laws of the State of Oregon, U.S.A."
+    },
+    {
+        "question": "For users in Europe, Middle East and Africa, which country's laws govern the EULA?",
+        "answer": "For licenses granted by Licensees who operate in Europe, Middle East and Africa, this Agreement is governed by the laws of Italy."
+    },
+    {
+        "question": "For users in Asia-Pacific Countries, which country's laws govern the EULA?",
+        "answer": "For licenses granted by Licensees who operate in Asia-Pacific Countries, the validity, interpretation and construction of the Agreement shall be governed by and construed in accordance with the Laws of the Republic of Singapore."
+    },
+    {
+        "question": "Which international convention does NOT apply to this EULA?",
+        "answer": "The United Nations Convention on Contracts for the International Sale of Goods does not apply."
+    },
+    {
+        "question": "What is the primary purpose of 'Code Grading Monitoring Page' in the Web Monitor?",
+        "answer": "To view Code Grading live results in graphs, either as Grades or Values, after enabling code grading on DL.CODE."
+    },
+    {
+        "question": "What is the function of the 'Configurator page' in the Web Monitor?",
+        "answer": "The Configurator page allows the user to view the configuration currently running on the device and load another one from the saved configurations."
+    },
+    {
+        "question": "What is 'MR' in the context of ISO/IEC TR 29158 (AIM DPM 2006) Code Quality Scan Grade Parameters?",
+        "answer": "MR stands for Minimum Reflectance."
+    },
+    {
+        "question": "What is 'GNU' in the context of ISO/IEC TR 29158 (AIM DPM 2006) Code Quality Scan Grade Parameters?",
+        "answer": "GNU stands for Grid Non-Uniformity."
+    },
+    {
+        "question": "What are the Code Quality Scan Grade Parameters for the ISO/IEC 15416 1D Standard?",
+        "answer": "The parameters are Decode, Decodability, Defects, Minimum Edge Contrast (EC), Minimum Reflectance (Rmin), Modulation (MOD), Symbol Contrast (SC), and Reflectance Margin."
+    },
+    {
+        "question": "What is 'Rmin' in the context of ISO/IEC 15416 1D Code Quality Scan Grade Parameters?",
+        "answer": "Rmin stands for Minimum Reflectance."
+    },
+    {
+        "question": "What is 'MOD' in the context of ISO/IEC 15416 1D Code Quality Scan Grade Parameters?",
+        "answer": "MOD stands for Modulation."
+    },
+    {
+        "question": "How are Fieldbus Digital Outputs controlled by the Fieldbus Master?",
+        "answer": "The Fieldbus Master can drive the Matrix reader’s Digital Outputs by assigning either communication strings or individual communication bits to the Digital Output Activation and Deactivation parameters."
+    },
+    {
+        "question": "What is the purpose of the 'Backup' function in DL.CODE?",
+        "answer": "The Backup function saves the current configuration and environment settings to the PC or another device."
+    },
+    {
+        "question": "What is the purpose of the 'Restore' function in DL.CODE?",
+        "answer": "The Restore function loads a previously saved configuration (.dlcfg) file onto the device."
+    },
+    {
+        "question": "What is the difference between 'Single Check' and 'Double Check' in the Web Monitor Configurator page?",
+        "answer": "The single check loads the configuration, while the double check loads the configuration and sets it as the startup configuration."
+    },
+    {
+        "question": "What is the process for setting the Web Monitor password?",
+        "answer": "Go to Device > Settings > Security Settings on DL.CODE, and set your password under the Web Monitor Settings tab."
+    },
+    {
+        "question": "What is the function of the 'Digital IO Conditioning' settings?",
+        "answer": "Digital IO Conditioning allows the user to configure the behavior of the device's digital input and output signals, often related to Fieldbus control."
+    },
+    {
+        "question": "What does the 'Wink and Web Monitor icons' area in the Device Discovery Window allow?",
+        "answer": "It allows the user to perform device identification (Wink) and open the Web Monitor for the selected device."
+    },
+    {
+        "question": "How can the configuration log level be changed?",
+        "answer": "The configuration log level can be changed under the 'Option' menu between Verbose, Information, and Error."
+    },
+    {
+        "question": "What is the main advantage of 'Silent Installation'?",
+        "answer": "Silent Installation allows for the unattended installation of DL.CODE using command line execution."
+    },
+    {
+        "question": "What information is covered in Appendix A?",
+        "answer": "Appendix A covers TCP/UDP PORTS."
+    },
+    {
+        "question": "What information is covered in Appendix B?",
+        "answer": "Appendix B covers WEBSENTINEL PLUS INVESTIGATOR."
+    },
+    {
+        "question": "What is the role of the 'DWCode Object' in Script Formatter?",
+        "answer": "The DWCode Object is a reference object providing specific data for Digimarc codes."
+    },
+    {
+        "question": "What is the role of the 'Result Object' in Script Formatter?",
+        "answer": "The Result Object is a reference object that provides the decoding results, including the list of decoded codes."
+    },
+    {
+        "question": "What are the prerequisites for accessing the Code Grading Monitoring or Configurator pages on the Web Monitor?",
+        "answer": "A user name and password are required to access these features."
+    },
+    {
+        "question": "What is the 'Maximum FoV' mentioned in decoding configuration?",
+        "answer": "The maximum FoV (Field of View) is the maximum area that the reader can capture an image from."
+    },
+    {
+        "question": "How can the Code Localization area be resized and moved?",
+        "answer": "The Code Localization area can be resized and moved by dragging its borders with the mouse."
+    },
+    {
+        "question": "What type of product is the Matrix 220?",
+        "answer": "The Matrix 220 is an Image Based Industrial Reader."
+    },
+    {
+        "question": "How many HMI LEDs are on the Matrix 220?",
+        "answer": "There are 5 HMI LEDs on the device to provide immediate operational feedback."
+    },
+    {
+        "question": "What is the function of the yellow X-Press button on the device?",
+        "answer": "The X-Press button is used to activate the Auto Setup function (quick configuration) without needing a PC."
+    },
+    {
+        "question": "Which Datalogic network protocol is used for Master/Slave synchronization?",
+        "answer": "The ID-NET™ protocol is used for synchronized Master/Slave networks."
+    },
+    {
+        "question": "What is the maximum number of devices supported in an ID-NET™ network?",
+        "answer": "The ID-NET™ network supports a maximum of 16 devices."
+    },
+    {
+        "question": "What is the primary resolution of the Matrix 220's sensor?",
+        "answer": "The primary resolution is 1.2 MPixel."
+    },
+    {
+        "question": "What is the minimum operating voltage for the Matrix 220?",
+        "answer": "The minimum operating voltage is 10 VDC."
+    },
+    {
+        "question": "What is the maximum operating voltage for the Matrix 220?",
+        "answer": "The maximum operating voltage is 30 VDC."
+    },
+    {
+        "question": "Does the Matrix 220 support Power over Ethernet?",
+        "answer": "Yes, it supports PoE (Power over Ethernet)."
+    },
+    {
+        "question": "What are the supported Ethernet speeds?",
+        "answer": "It supports 10/100 Mbit/s Ethernet speeds."
+    },
+    {
+        "question": "Name two Fieldbus protocols supported by the Matrix 220.",
+        "answer": "It supports PROFINET I/O and EtherNet/IP."
+    },
+    {
+        "question": "What is the common industrial communication protocol supported over TCP/IP?",
+        "answer": "Modbus TCP is supported."
+    },
+    {
+        "question": "Which advanced data connectivity protocol is supported by the Matrix 220?",
+        "answer": "The OPC UA protocol is supported for advanced data connectivity."
+    },
+    {
+        "question": "What serial communication standards does the Matrix 220 support?",
+        "answer": "It supports RS-232, RS-422."
+    },
+    {
+        "question": "What kind of codes are 'Data Matrix Direct Marking' codes?",
+        "answer": "They are 2D codes applied directly to a part (DPM)."
+    },
+    {
+        "question": "Name two types of 1D stacked codes supported for decoding.",
+        "answer": "PDF417 Standard and Micro PDF417 are supported."
+    },
+    {
+        "question": "Which popular 1D code standards are supported?",
+        "answer": "Commonly supported standards include Code 128 (GS1-128), Code 39, EAN/UPC, and Interleaved 2 of 5."
+    },
+    {
+        "question": "Which proprietary digital watermark barcode is supported by the reader?",
+        "answer": "Digimarc Barcode is supported."
+    },
+    {
+        "question": "What 2D matrix codes are supported besides Data Matrix?",
+        "answer": "QR Code, Micro QR Code, and Aztec Code are supported."
+    },
+    {
+        "question": "Name one postal code standard supported by the Matrix 220.",
+        "answer": "Supported postal codes include Australia Post, Royal Mail 4 State, and Intelligent Mail."
+    },
+    {
+        "question": "What is the primary function of the Green Spot light (not the LED)?",
+        "answer": "The Green Spot provides visual feedback directly onto the scanned object to confirm a good read."
+    },
+    {
+        "question": "Where can electronic versions of the product documentation be downloaded from?",
+        "answer": "They can be downloaded from the Datalogic website (www.datalogic.com)."
+    },
+    {
+        "question": "What should the user do if they have comments or suggestions about the Datalogic publications?",
+        "answer": "They should let Datalogic know via the 'Contact' page on the website."
+    },
+    {
+        "question": "What is the primary warning given regarding copying or transmitting the documentation?",
+        "answer": "No part of the documentation may be reproduced, stored, or transmitted without the express written permission of Datalogic S.p.A."
+    },
+    {
+        "question": "What license is granted to owners of Datalogic products regarding this documentation?",
+        "answer": "They are granted a non-exclusive, revocable license to reproduce and transmit this documentation for the purchaser's own internal business purposes."
+    },
+    {
+        "question": "What must the purchaser ensure is present on any reproductions of the documentation?",
+        "answer": "They must ensure that all proprietary notices, including copyright notices, appear on any reproductions."
+    },
+    {
+        "question": "Which component manages the Matrix 220's focus control?",
+        "answer": "The focus control is managed electronically."
+    },
+    {
+        "question": "How is the X-Press button typically represented on the device?",
+        "answer": "It is typically a yellow button."
+    },
+    {
+        "question": "What does the device's ability to read DPM codes make it suitable for?",
+        "answer": "It is suitable for Automotive and Electronics applications where parts are directly marked."
+    },
+    {
+        "question": "What is the default operation that the X-Press button enables for quick setup?",
+        "answer": "It enables Auto Setup."
+    },
+    {
+        "question": "In what environment is the Matrix 220 intended to be used?",
+        "answer": "It is an Industrial Reader, intended for industrial environments."
+    },
+    {
+        "question": "What characteristic of the image sensor is beneficial for reading moving objects?",
+        "answer": "The Global Shutter characteristic is beneficial."
+    },
+    {
+        "question": "What is the general classification of the Matrix 220?",
+        "answer": "It is classified as an Image Based Reader."
+    },
+    {
+        "question": "What is the latest year mentioned in the copyright notice of the document?",
+        "answer": "The copyright notice mentions up to 2024."
+    },
+    {
+        "question": "Which serial protocol is suitable for long-distance, multi-drop communication?",
+        "answer": "The RS-485 protocol is suitable for this."
+    },
+    {
+        "question": "Which serial protocol is typically used for point-to-point communication?",
+        "answer": "The RS-232 protocol is typically used for point-to-point communication."
+    },
+    {
+        "question": "What voltage is typically associated with the Fieldbus communication lines?",
+        "answer": "The Fieldbus lines typically operate at the same voltage range as the reader, 10-30 VDC."
+    },
+    {
+        "question": "What communication standards allow the Matrix 220 to integrate into large industrial control systems?",
+        "answer": "PROFINET I/O and EtherNet/IP allow for this integration."
+    },
+    {
+        "question": "How do the 5 status LEDs help the operator?",
+        "answer": "They provide immediate visual feedback on the reader's status, eliminating the need to check the configuration software constantly."
+    },
+    {
+        "question": "What distinguishes the ID-NET™ from standard Ethernet communication?",
+        "answer": "ID-NET™ is a proprietary Datalogic network focused on synchronized reader operation, unlike standard Ethernet which is for general data transmission."
+    },
+    {
+        "question": "What types of surfaces is the Matrix 220 designed to read codes from effectively?",
+        "answer": "It is designed to read from various surfaces, including those that are highly reflective (using polarized lighting) or have low contrast (DPM)."
+    },
+    {
+        "question": "What kind of memory is typically used for the configuration settings saved by the X-Press button?",
+        "answer": "The settings are typically saved to the device's non-volatile memory."
+    },
+    {
+        "question": "What feature of the Matrix 220 allows it to automatically find the best reading parameters?",
+        "answer": "The Auto Setup feature, activated by the X-Press button, performs this function."
+    }
+    ]

@@ -32,11 +32,22 @@ const App = () => {
 
   return (
     <div className={`container ${showChatbot ? "show-chatbot" : ""}`}>
-      <button onClick={() => setShowChatbot(prev => !prev)} 
-      id="chatbot-toggler">
-        <span className="material-symbols-outlined">mode_comment</span>
-        <span className="material-symbols-outlined">close</span>
-      </button>
+
+    <button
+      onClick={() => setShowChatbot((prev) => !prev)}
+      id="chatbot-toggler"
+      className="chatbot-button"
+    >
+      <span className="material-symbols-outlined">mode_comment</span>
+      <span className="material-symbols-outlined">close</span>
+
+      {/* Balloon */}
+    <div className="chatbot-tooltip">
+      <div className="wave-hand">👋 </div>  Hi there!<br />
+        How can I help you today?
+      <div className="chatbot-tooltip-arrow"></div>
+    </div>
+    </button>
       <div className="chatbot-popup">
         <div className="chat-header">
           <div className="header-info">
@@ -51,7 +62,9 @@ const App = () => {
         <div ref={chatBodyRef} className="chat-body">
           <div className="message bot-message">
             <ChatbotIcon />
-            <p className="message-text">How can I help you?</p>
+            <div className="message-text">
+              <div className="wave-hand">👋 </div>  How can I help you?
+            </div>
           </div>
           {chatHistory.map((chat, index) => (
             <ChatMessage key={index} chat={chat} />

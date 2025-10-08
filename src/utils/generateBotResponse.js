@@ -1,6 +1,6 @@
 import { companyInfo } from "../promt_data/userpromt";
 import systemPrompt from "../promt_data/systempromt";
-
+import fs from "fs";
 // Helper to update chat history
 function updateHistory(setChatHistory, text, isError = false, isPending = false) {
     setChatHistory((prev) => [
@@ -19,28 +19,110 @@ function isValidEmail(email) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
+async function loadQAData() {
+    const res = await fetch("/tempQA.json");
+    return await res.json();
+}
+
+const qaData = await loadQAData();
+console.log("Số lượng Q&A:", qaData.length);
+console.log("Loaded QA data:", qaData);
+
+function findRelevantContext(userPrompt, qaData, topK = 3) {
+    const lowerPrompt = userPrompt.toLowerCase();
+
+    // Tính "score" cho từng item (dựa trên số từ trùng)
+    const scored = qaData.map(item => {
+        const q = item.question.toLowerCase();
+        let score = 0;
+        for (let word of lowerPrompt.split(" ")) {
+        if (q.includes(word)) score++;
+        }
+        return { ...item, score };
+    });
+
+    // Sắp xếp theo score giảm dần
+    scored.sort((a, b) => b.score - a.score);
+
+    // Lấy topK answer có score cao nhất (và bỏ score = 0)
+    const topAnswers = scored
+        .filter(item => item.score > 0)
+        .slice(0, topK)
+        .map(item => `Q: ${item.question}\nA: ${item.answer}`);
+
+    return topAnswers.join("\n---\n");
+    }
+
+
 export async function generateBotResponse(history, setChatHistory) {
-    const formattedHistory = [
-        { role: "user", parts: [{ text: systemPrompt }] },
-        ...history.map(({ role, text }) => ({
-            role,
-            parts: [{ text: String(text) }],
-        })),
-    ];
-
-    const requestOptions = {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ contents: formattedHistory }),
-    };
-
+    /*
     try {
-        const response = await fetch(import.meta.env.VITE_API_URL, requestOptions);
-        const data = await response.json();
-        if (!response.ok)
-            throw new Error(data.error?.message || "Something went wrong");
-        const apiResponseText = data.candidates[0].content.parts[0].text.replace(/\*\*(.*?)\*\*/g, "$1").trim();
+        const formattedHistory = [
+            { role: "system", content: systemPrompt },
+            ...history.map(({ role, text }) => ({
+                role,
+                content: String(text),
+            })),
+        ];
 
+        const response = await fetch("https://api.openai.com/v1/chat/completions", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+                "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`
+            },
+            body: JSON.stringify({
+                model: import.meta.env.VITE_OPENAI_MODEL || "gpt-4o-mini",
+                messages: formattedHistory,
+                temperature: 0.7,
+                stream: false
+            }),
+        });
+
+        const data = await response.json();
+        if (!response.ok) throw new Error(data.error?.message || "Something went wrong");
+
+        const apiResponseText = data.choices[0].message.content.trim(); 
+    */
+            try {
+            const userPrompt = history[history.length - 1]?.text || "";
+            //const context = findRelevantContext(userPrompt);
+            const context = findRelevantContext(userPrompt, qaData, 10);
+            console.log("Found context:", context);
+            const formattedHistory = [
+                { role: "system", content: systemPrompt },
+                ...history.map(({ role, text }) => ({
+                    role,
+                    content: String(text),
+                })),
+                { role: "user", content: companyInfo } // userPrompt needs to be defined or passed as an argument
+            ];
+
+            // Ghép conversation thành 1 prompt text
+            const prompt = formattedHistory
+                .map(m => `${m.role}: ${m.content}`)
+                .join("\n");
+            const finalPrompt = context
+                ? `Context:\n${context}\n\n${prompt}`
+                : prompt;
+            const response = await fetch("http://localhost:11500/api/chat", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                    model: "gpt-oss:20b-cloud",
+                    messages: [
+                        { role: "system", content: "You are a assistant." },
+                        { role: "user", content: finalPrompt }
+                    ],
+                    stream: false
+                }),
+            });
+            const data = await response.json();
+            if (!response.ok) throw new Error(data.error || "Something went wrong");
+
+            const apiResponseText = data.message?.content?.trim() || "⚠️ No response";
+
+            console.log("Bot:", apiResponseText);
         // Device commands
         if (apiResponseText.startsWith("wink")) {
             const arg = apiResponseText.split(/\s+/)[1];
