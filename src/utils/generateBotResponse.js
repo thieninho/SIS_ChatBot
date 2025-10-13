@@ -31,7 +31,6 @@ console.log("Loaded QA data:", qaData);
 function findRelevantContext(userPrompt, qaData, topK = 3) {
     const lowerPrompt = userPrompt.toLowerCase();
 
-    // Tính "score" cho từng item (dựa trên số từ trùng)
     const scored = qaData.map(item => {
         const q = item.question.toLowerCase();
         let score = 0;
@@ -41,10 +40,8 @@ function findRelevantContext(userPrompt, qaData, topK = 3) {
         return { ...item, score };
     });
 
-    // Sắp xếp theo score giảm dần
     scored.sort((a, b) => b.score - a.score);
 
-    // Lấy topK answer có score cao nhất (và bỏ score = 0)
     const topAnswers = scored
         .filter(item => item.score > 0)
         .slice(0, topK)
@@ -87,7 +84,7 @@ export async function generateBotResponse(history, setChatHistory) {
             try {
             const userPrompt = history[history.length - 1]?.text || "";
             //const context = findRelevantContext(userPrompt);
-            const context = findRelevantContext(userPrompt, qaData, 10);
+            const context = findRelevantContext(userPrompt, qaData, 3);
             console.log("Found context:", context);
             const formattedHistory = [
                 { role: "system", content: systemPrompt },
@@ -123,6 +120,10 @@ export async function generateBotResponse(history, setChatHistory) {
             const apiResponseText = data.message?.content?.trim() || "⚠️ No response";
 
             console.log("Bot:", apiResponseText);
+        //////////////////////////////////////////
+
+
+        /////////////////////////////////////////
         // Device commands
         if (apiResponseText.startsWith("wink")) {
             const arg = apiResponseText.split(/\s+/)[1];

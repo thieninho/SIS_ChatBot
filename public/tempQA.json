@@ -8,32 +8,8 @@
     "answer": "Models include Standard White (STD), DPM Red/Blue (DPM), High Power Illuminator versions (HP), UV model (3U2‑01U), and Power over Ethernet (PoE) variants. Not all combinations exist; see the product page for full list. "
   },
   {
-    "question": "What does HMI LED (◁) indicate?",
-    "answer": "This is the Ready LED (◁). It indicates that the device is powered on and ready for operation."
-  },
-  {
-    "question": "What does HMI LED (✔) mean?",
-    "answer": "This is the Good LED (✔). It lights up when the code reading is successful."
-  },
-  {
-    "question": "What is the function of HMI LED (∫)?",
-    "answer": "This is the Trigger LED (∫). It turns on when a reading trigger signal is received."
-  },
-  {
-    "question": "What does HMI LED (⇄) show?",
-    "answer": "This is the COM LED (⇄). It indicates the communication status of the device."
-  },
-  {
-    "question": "What does HMI LED (✖) represent?",
-    "answer": "This is the Status LED (✖). It shows the overall device condition (errors or warnings)."
-  },
-  {
     "question": "Give examples of Matrix 220 part numbers and their meaning.",
     "answer": "Examples: 937900037 – 1.2MP DPM‑R 12mm (X series); 937900042 – 1.2MP DPM‑B 12mm (X series); 937900017 – 1.2MP STD‑R 7mm HP (Digimarc capable); 937900002 – 1.2MP STD‑W 7mm PoE (legacy). Suffixes indicate optics (7/12 mm), illuminator color (R/B/W/UV), and HP/PoE/ESD options. "
-  },
-  {
-    "question": "Who is allowed to install the reader and what power sources are allowed?",
-    "answer": "Installation is intended for qualified personnel only. Use a UL Listed LPS/Class 2 supply (10–30 Vdc) or a UL Listed PoE source per IEEE 802.3af; PoE or direct plug‑in Class 2 supplies are acceptable. "
   },
   {
     "question": "What is the LED safety classification for Matrix 220 models?",
@@ -52,12 +28,8 @@
     "answer": "Auto‑Learn via X‑PRESS/BM150 configures only a single code per run; subsequent Learns overwrite the prior one. It doesn’t recognize Pharmacode, MSI, Standard 2 of 5, or Matrix 2 of 5. Use DL.CODE Auto‑Learn for multiple symbologies. "
   },
   {
-    "question": "What functions are available on the X‑PRESS interface?",
-    "answer": "Test (bar‑graph Good Read rate), Aim/Autofocus (turn on pointers/run autofocus), Setup (exposure/gain calibration), and Learn (auto‑detect and configure one presented code). LEDs and beeper provide feedback. "
-  },
-  {
     "question": "How do I interpret the Test Mode bar graph LEDs?",
-    "answer": "The five LEDs form a Good Read Rate bar graph at ~20%, 40%, 60%, 75%, 95% levels. If No Read, only STATUS (red) blinks. Test auto‑exits after ~3 minutes. "
+    "answer": "The five LEDs form a Good Read Rate bar graph at ~20%, 40%, 60%, 75%, 95% levels."
   },
   {
     "question": "What mounting angles are recommended for typical labels?",
@@ -232,7 +204,7 @@
     "answer": "An accessory that lets Matrix readers join an Ethernet‑Based Connectivity (EBC) ring with SC5100 controllers (alongside laser scanners). Not supported by some X‑series models; see manual. "
   },
   {
-    "question": "Outline the connect LEDs for the EBC module.",
+    "question": "Outline the basic wiring for the EBC module.",
     "answer": "Connect PWR IN (24 Vdc), pigtail to Matrix, EBC1/EBC2 Ethernet ring ports, and optional EXT ILL (strobe). Blue LEDs indicate power; orange blink indicates link activity on EBC ports. Ensure frame is earthed. "
   },
   {
@@ -342,10 +314,6 @@
   {
     "question": "What does the 'Test Mode' feature allow the user to do?",
     "answer": "Test Mode allows you to test the reading performance of your system."
-  },
-  {
-    "question": "Where is the configuration saved when entering Test Mode?",
-    "answer": "When entering Test Mode, the configuration is saved in Temporary Memory."
   },
   {
     "question": "What is the default naming syntax for an image downloaded from the Web Monitor?",
@@ -540,10 +508,6 @@
     "answer": "The View Window allows the user to display the monitored images in a separate, customizable window."
   },
   {
-    "question": "How can images be saved on demand using the HMP command?",
-    "answer": "Images can be saved On Demand Using the Send Images HMP Command."
-  },
-  {
     "question": "What is 'Multi Image Acquisition Settings'?",
     "answer": "Multi Image Acquisition Settings allow grouping multiple image settings (with different parameters) into sequences to be triggered by a single event."
   },
@@ -680,10 +644,6 @@
     "answer": "Digital IO Conditioning allows the user to configure the behavior of the device's digital input and output signals, often related to Fieldbus control."
   },
   {
-    "question": "What does the 'Wink and Web Monitor icons' area in the Device Discovery Window allow?",
-    "answer": "It allows the user to perform device identification (Wink) and open the Web Monitor for the selected device."
-  },
-  {
     "question": "How can the configuration log level be changed?",
     "answer": "The configuration log level can be changed under the 'Option' menu between Verbose, Information, and Error."
   },
@@ -725,7 +685,7 @@
   },
   {
     "question": "How many HMI LEDs are on the Matrix 220?",
-    "answer": "There are 5 HMI LEDs on the device to provide immediate operational feedback."
+    "answer": "There are 5 HMI LEDs: Ready ◁ LED, Good ✔ LED, Trigger ∫ LED, COM ⇄ LED, and Status ✖ LED."
   },
   {
     "question": "What is the function of the yellow X-Press button on the device?",
