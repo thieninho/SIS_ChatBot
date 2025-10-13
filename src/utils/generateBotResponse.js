@@ -102,7 +102,7 @@ export async function generateBotResponse(history, setChatHistory) {
             const finalPrompt = context
                 ? `Context:\n${context}\n\n${prompt}`
                 : prompt;
-            const response = await fetch("http://localhost:11500/api/chat", {
+            const response = await fetch("http://10.84.30.78:11500/api/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({
