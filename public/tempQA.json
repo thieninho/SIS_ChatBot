@@ -288,10 +288,6 @@
     "answer": "The 'Wink' icon allows the user to make the selected device on the list flash its HMI LED to quickly identify its physical location."
   },
   {
-    "question": "What can you configure using the 'UI Settings' option in the Main Menu?",
-    "answer": "You can configure console presentation, Image Buffer positioning and behavior, Simulator Settings, and select which features to enable for viewing. The Monitor can also be configured."
-  },
-  {
     "question": "What are the three User Levels for configuration access in DL.CODE?",
     "answer": "The three User Levels are Basic User (no parameters modification allowed), Basic-Installer (medium level of parameter modification allowed), and Expert-Installer (maximum level of parameter modification allowed)."
   },

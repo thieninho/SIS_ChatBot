@@ -11,6 +11,7 @@ import { sendReportEmail } from "../services/sendReportEmail";
 import { restartDevice } from "../services/restartDevice";
 import { xpressFunctionDirectly } from "../services/xpressFuncDirectly";
 import { getDeviceStatistics } from "../services/getDeviceStats";
+import { decodeFunction } from "../services/decode";
 export const companyInfo = {
     "introduction": `Datalogic is a global technology leader in the automatic data capture and factory automation markets, specialized in the designing and production of bar code readers, mobile computers, sensors for detection, measurement and safety, RFID, vision and laser marking systems.`,
     "located": `DATALOGIC VIETNAM LLC. F04, Lot I-4a Saigon Hi-Tech Park, Long Thanh My Ward, Thu Duc City Ho Chi Minh City Vietnam.`,
@@ -114,6 +115,13 @@ export const companyInfo = {
     "get statistics": async (ip) => {
         try {
             return await getDeviceStatistics(ip);
+        } catch (err) {
+            return String(err);
+        }
+    },
+    "decode": async (ip) => {
+    try {
+            return await decodeFunction(ip);
         } catch (err) {
             return String(err);
         }

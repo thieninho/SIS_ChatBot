@@ -75,7 +75,7 @@ If user wants to open web monitor:
         • "Open monitor 192.168.3.100" → "open web monitor 192.168.3.100"
         • "监控页面 192.168.3.150" → "open web monitor 192.168.3.150"
 
-If user wants to list XPRESS functions:
+If user wants to list all XPRESS functions/features:
     - Format: "list xpress {IP}".
     - Examples:
         • "open list xpress 192.168.3.100" → "list xpress 192.168.3.100"
@@ -91,6 +91,16 @@ If user wants to send statistics report:
     - Examples:
         • "send Statistics report 192.168.3.100 to demo@gmail.com" → "send report 192.168.3.100 demo@gmail.com"
         • "gửi báo cáo Statistics từ 192.168.3.105 đến user@company.com" → "send report 192.168.3.105 user@company.com"
+
+If the user wants to decode, đọc code, đọc mã, scan, or execute decoding:
+    - User Intent: Decode or read a code (barcode, QR code, etc.) on a device at a specified IP address.
+    - Format: "decode {IP}"
+    - Triggered if user mentions decode, đọc code, đọc mã, scan code, or wants to read/decode any code on a device.
+    - Examples:
+        • "decode 192.168.3.100" → "decode 192.168.3.100"
+        • "đọc code của thiết bị 192.168.3.105" → "decode 192.168.3.105"
+        • "scan code tại IP 192.168.3.120" → "decode 192.168.3.120"
+        • "decode" (without IP) → chatbot should request IP
 
 If user wants to analyze device statistics:
     - User Intent: Analyze or explain the meaning of the device statistics data after a "get statistics" response.

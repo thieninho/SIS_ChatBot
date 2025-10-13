@@ -25,10 +25,9 @@ async function loadQAData() {
 }
 
 const qaData = await loadQAData();
-console.log("Số lượng Q&A:", qaData.length);
-console.log("Loaded QA data:", qaData);
+console.log("No. Q&A:", qaData.length);
 
-function findRelevantContext(userPrompt, qaData, topK = 3) {
+function findRelevantContext(userPrompt, qaData, topK) {
     const lowerPrompt = userPrompt.toLowerCase();
 
     const scored = qaData.map(item => {
@@ -81,10 +80,10 @@ export async function generateBotResponse(history, setChatHistory) {
 
         const apiResponseText = data.choices[0].message.content.trim(); 
     */
-            try {
+        try {
             const userPrompt = history[history.length - 1]?.text || "";
             //const context = findRelevantContext(userPrompt);
-            const context = findRelevantContext(userPrompt, qaData, 3);
+            const context = findRelevantContext(userPrompt, qaData, 5);
             console.log("Found context:", context);
             const formattedHistory = [
                 { role: "system", content: systemPrompt },
@@ -111,7 +110,8 @@ export async function generateBotResponse(history, setChatHistory) {
                         { role: "system", content: "You are a assistant." },
                         { role: "user", content: finalPrompt }
                     ],
-                    stream: false
+                    stream: false,
+                    options: { temperature: 0 }
                 }),
             });
             const data = await response.json();
@@ -311,6 +311,46 @@ export async function generateBotResponse(history, setChatHistory) {
             }
             return;
         }
+        
+        if (apiResponseText.toLowerCase().startsWith("decode")) {
+        const parts = apiResponseText.split(" ");
+        const ip = parts[1];
+        if (!ip) {
+            setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== "Thinking..."),
+                { role: "model", text: "⚠️ Please provide device IP" }
+            ]);
+            return;
+        }
+
+        setChatHistory((prev) => [
+            ...prev.filter((msg) => msg.text !== "Thinking..."),
+            { role: "model", text: `Decoding on device ${ip}...`, isPending: true },
+        ]);
+
+        try {
+            const reply = await companyInfo["decode"](ip);
+
+            if (reply.type === "success") {
+                setChatHistory((prev) => [
+                    ...prev.filter((msg) => msg.text !== `Decoding on device ${ip}...`),
+                    { role: "model", text: "✅ " + reply.message },
+                ]);
+            } else {
+                setChatHistory((prev) => [
+                    ...prev.filter((msg) => msg.text !== `Decoding on device ${ip}...`),
+                    { role: "model", text: reply.message || "❌ Decode failed" },
+                ]);
+            }
+        } catch (err) {
+            setChatHistory((prev) => [
+                ...prev.filter((msg) => msg.text !== `Decoding on device ${ip}...`),
+                { role: "model", text: String(err), isError: true },
+            ]);
+        }
+        return;
+    }
+
 
         // Company info and fallback
         if (companyInfo[apiResponseText]) {
