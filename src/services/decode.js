@@ -22,26 +22,28 @@ export async function decodeFunction(ip) {
                 const data = JSON.parse(msg);
 
                 if (!ackReceived) {
-                    reject("❌ No ACK before data");
+                    reject("❌ No ACK before response");
                     removeListener();
                     return;
                 }
 
-                clearTimeout(responseTimeout);
-
+                let messages = [];
+                
+                if (Array.isArray(data.message)) {
+                    messages = data.message;
+                } else if (typeof data.message === "object" && data.message !== null) {
+                    messages = Object.values(data.message);
+                } else if (data.message) {
+                    messages = [data.message];
+                }
                 if (data.type === "success") {
-                    resolve({
-                        type: "success",
-                        ip,
-                        message: data.message || "Decode function executed successfully.",
-                        errorCode: data.errorCode || 0,
-                    });
+                    for (let i = 0; i < messages.length; i++) {
+                        const m = messages[i];
+                        resolve(m);
+                    }
+                    resolve("Config changed successfully.");
                 } else {
-                    reject({
-                        type: "error",
-                        message: data.message || "❌ Decode function execution failed.",
-                        errorCode: data.errorCode || 1,
-                    });
+                    console.log(`❌ ${messages.join("\n") || "Failed to change device config."}`);
                 }
                 removeListener();
             } catch (e) {

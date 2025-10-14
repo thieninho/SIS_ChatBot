@@ -28,8 +28,9 @@ const qaData = await loadQAData();
 console.log("No. Q&A:", qaData.length);
 
 function findRelevantContext(userPrompt, qaData, topK) {
-    const lowerPrompt = userPrompt.toLowerCase();
-
+    let lowerPrompt = userPrompt.toLowerCase();
+    lowerPrompt = lowerPrompt.replace("using the details provided above, please address this query:", "").trim();
+    console.log("Finding context for prompt:", lowerPrompt);
     const scored = qaData.map(item => {
         const q = item.question.toLowerCase();
         let score = 0;
@@ -157,7 +158,6 @@ export async function generateBotResponse(history, setChatHistory) {
             }
             return;
         }
-
         if (apiResponseText.toLowerCase().startsWith("change ip")) {
             const parts = apiResponseText.split(/\s+/);
             let serial = null, oldIP, newIP;
