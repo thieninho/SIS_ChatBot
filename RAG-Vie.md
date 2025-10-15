@@ -39,3 +39,4 @@ Thay vì chỉ dựa vào kiến thức đã được huấn luyện, RAG cho ph
 - Khi dữ liệu cần **liên tục cập nhật**.  
 - Khi muốn **LLM hiểu dữ liệu nội bộ** (manual, log, ticket).  
 - Khi cần **câu trả lời có nguồn gốc rõ ràng**.
+

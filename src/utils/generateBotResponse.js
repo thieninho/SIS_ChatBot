@@ -1,5 +1,6 @@
 import { companyInfo } from "../promt_data/userpromt";
 import systemPrompt from "../promt_data/systempromt";
+
 import fs from "fs";
 // Helper to update chat history
 function updateHistory(setChatHistory, text, isError = false, isPending = false) {
@@ -20,35 +21,33 @@ function isValidEmail(email) {
 }
 
 async function loadQAData() {
-    const res = await fetch("/tempQA.json");
+    const res = await fetch("/matrix220_clean_QA.json");
     return await res.json();
 }
 
 const qaData = await loadQAData();
 console.log("No. Q&A:", qaData.length);
 
-function findRelevantContext(userPrompt, qaData, topK) {
-    let lowerPrompt = userPrompt.toLowerCase();
-    lowerPrompt = lowerPrompt.replace("using the details provided above, please address this query:", "").trim();
-    console.log("Finding context for prompt:", lowerPrompt);
-    const scored = qaData.map(item => {
-        const q = item.question.toLowerCase();
-        let score = 0;
-        for (let word of lowerPrompt.split(" ")) {
-        if (q.includes(word)) score++;
-        }
-        return { ...item, score };
-    });
+function cosineSimilarity(vecA, vecB) {
+    if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
+    const dotProduct = vecA.reduce((sum, a, i) => sum + a * vecB[i], 0);
+    const magA = Math.sqrt(vecA.reduce((sum, a) => sum + a * a, 0));
+    const magB = Math.sqrt(vecB.reduce((sum, b) => sum + b * b, 0));
+    return magB === 0 ? 0 : dotProduct / (magA * magB);
+}
 
-    scored.sort((a, b) => b.score - a.score);
+export function findRelevantContext(promptVector, qaData, topK = 5) {
+    const scored = qaData.map(item => ({
+        ...item,
+        similarity: cosineSimilarity(promptVector, item.vector)
+    }));
 
-    const topAnswers = scored
-        .filter(item => item.score > 0)
-        .slice(0, topK)
-        .map(item => `Q: ${item.question}\nA: ${item.answer}`);
+    scored.sort((a, b) => b.similarity - a.similarity);
 
-    return topAnswers.join("\n---\n");
-    }
+    return scored.slice(0, topK)
+        .map(item => `Q: ${item.question}\nA: ${item.answer}\n(similarity: ${item.similarity.toFixed(3)})`)
+        .join("\n---\n");
+}
 
 
 export async function generateBotResponse(history, setChatHistory) {
@@ -61,7 +60,6 @@ export async function generateBotResponse(history, setChatHistory) {
                 content: String(text),
             })),
         ];
-
         const response = await fetch("https://api.openai.com/v1/chat/completions", {
             method: "POST",
             headers: {
@@ -75,7 +73,6 @@ export async function generateBotResponse(history, setChatHistory) {
                 stream: false
             }),
         });
-
         const data = await response.json();
         if (!response.ok) throw new Error(data.error?.message || "Something went wrong");
 
