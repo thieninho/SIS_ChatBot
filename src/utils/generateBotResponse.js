@@ -1,7 +1,9 @@
 import { companyInfo } from "../promt_data/userpromt";
 import systemPrompt from "../promt_data/systempromt";
+import { pipeline } from "@xenova/transformers";
+import * as use from '@tensorflow-models/universal-sentence-encoder';
+import * as tf from '@tensorflow/tfjs';
 
-import fs from "fs";
 // Helper to update chat history
 function updateHistory(setChatHistory, text, isError = false, isPending = false) {
     setChatHistory((prev) => [
@@ -21,12 +23,13 @@ function isValidEmail(email) {
 }
 
 async function loadQAData() {
-    const res = await fetch("/matrix220_clean_QA.json");
+    const res = await fetch("/questions_with_vectors.json");
     return await res.json();
 }
 
 const qaData = await loadQAData();
 console.log("No. Q&A:", qaData.length);
+
 
 function cosineSimilarity(vecA, vecB) {
     if (!vecA || !vecB || vecA.length !== vecB.length) return 0;
@@ -50,38 +53,18 @@ export function findRelevantContext(promptVector, qaData, topK = 5) {
 }
 
 
-export async function generateBotResponse(history, setChatHistory) {
-    /*
-    try {
-        const formattedHistory = [
-            { role: "system", content: systemPrompt },
-            ...history.map(({ role, text }) => ({
-                role,
-                content: String(text),
-            })),
-        ];
-        const response = await fetch("https://api.openai.com/v1/chat/completions", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                "Authorization": `Bearer ${import.meta.env.VITE_OPENAI_API_KEY}`
-            },
-            body: JSON.stringify({
-                model: import.meta.env.VITE_OPENAI_MODEL || "gpt-4o-mini",
-                messages: formattedHistory,
-                temperature: 0.7,
-                stream: false
-            }),
-        });
-        const data = await response.json();
-        if (!response.ok) throw new Error(data.error?.message || "Something went wrong");
+const model = await use.load();
 
-        const apiResponseText = data.choices[0].message.content.trim(); 
-    */
+
+export async function generateBotResponse(history, setChatHistory) {
         try {
-            const userPrompt = history[history.length - 1]?.text || "";
+            let userPrompt = history[history.length - 1]?.text || "";
+            userPrompt = userPrompt.replace("Using the details provided above, please address this query:", "").trim();
+            console.log("User:", userPrompt);
             //const context = findRelevantContext(userPrompt);
-            const context = findRelevantContext(userPrompt, qaData, 5);
+            const embeddings = await model.embed([userPrompt]);
+            const userVector = embeddings.arraySync()[0];
+            const context = findRelevantContext(userVector, qaData, 10);
             console.log("Found context:", context);
             const formattedHistory = [
                 { role: "system", content: systemPrompt },
