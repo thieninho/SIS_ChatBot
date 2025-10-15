@@ -40,17 +40,49 @@ function cosineSimilarity(vecA, vecB) {
 }
 
 export function findRelevantContext(promptVector, qaData, topK = 5) {
-    const scored = qaData.map(item => ({
+    const scoredQuestion  = qaData.map(item => ({
         ...item,
-        similarity: cosineSimilarity(promptVector, item.vector)
+        similarity: cosineSimilarity(promptVector, item.questionVector)
     }));
+    const scoredAnswer  = qaData.map(item => ({
+        ...item,
+        similarity: cosineSimilarity(promptVector, item.answerVector)
+    }));
+    
+    console.log("Scored Q:", scoredQuestion);
+    console.log("Scored A:", scoredAnswer);
 
+    //scoredQuestion.sort((a, b) => b.similarity - a.similarity);
+    //scoredAnswer.sort((a, b) => b.similarity - a.similarity);
+
+    return scoredQuestion.slice(0, topK)
+        .map(item => `Q: ${item.question}\nA: ${item.answer}\n(similarity: ${item.similarity.toFixed(3)})`)
+        .join("\n---\n");
+}
+
+function findRelevantQA(promptVector, qaData, topK) {
+    const scored = qaData.map(item => {
+        const simQ = cosineSimilarity(promptVector, item.questionVector);
+        const simA = cosineSimilarity(promptVector, item.answerVector);
+        console.log("Scored Q:", simQ);
+        console.log("Scored A:", simA);
+        // lấy trung bình
+        const simAvg = (simQ*0.8 + simA*0.2) / 2;
+        return {
+        ...item,
+        similarityQuestion: simQ,
+        similarityAnswer: simA,
+        similarity: simAvg
+        };
+    });
+
+    // sort theo similarity trung bình
     scored.sort((a, b) => b.similarity - a.similarity);
 
     return scored.slice(0, topK)
-        .map(item => `Data: ${item.data}\n(similarity: ${item.similarity.toFixed(3)})`)
-        .join("\n---\n");
-}
+            .map(item => `Q: ${item.question}\nA: ${item.answer}\n(similarity: ${item.similarity.toFixed(3)})`)
+            .join("\n---\n");
+    }
 
 
 const model = await use.load();
@@ -60,10 +92,11 @@ export async function generateBotResponse(history, setChatHistory) {
         try {
             let userPrompt = history[history.length - 1]?.text || "";
             userPrompt = userPrompt.replace("Using the details provided above, please address this query:", "").trim();
+            console.log("User:", userPrompt);
             //const context = findRelevantContext(userPrompt);
             const embeddings = await model.embed([userPrompt]);
             const userVector = embeddings.arraySync()[0];
-            const context = findRelevantContext(userVector, qaData, 5);
+            const context = findRelevantQA(userVector, qaData, 10);
             console.log("Found context:", context);
             const formattedHistory = [
                 { role: "system", content: systemPrompt },
