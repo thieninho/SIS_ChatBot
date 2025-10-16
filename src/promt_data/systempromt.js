@@ -92,7 +92,7 @@ If user wants to send statistics report:
         • "send Statistics report 192.168.3.100 to demo@gmail.com" → "send report 192.168.3.100 demo@gmail.com"
         • "gửi báo cáo Statistics từ 192.168.3.105 đến user@company.com" → "send report 192.168.3.105 user@company.com"
 
-If the user wants to decode, đọc code, đọc mã, scan, or execute decoding:
+If the user wants to decode, đọc code, find barcode, đọc mã, scan, or execute decoding:
     - User Intent: Decode or read a code (barcode, QR code, etc.) on a device at a specified IP address.
     - Format: "decode {IP}"
     - Triggered if user mentions decode, đọc code, đọc mã, scan code, or wants to read/decode any code on a device.

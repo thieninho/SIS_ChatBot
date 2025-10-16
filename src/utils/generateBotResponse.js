@@ -1,7 +1,7 @@
 import { companyInfo } from "../promt_data/userpromt";
 import systemPrompt from "../promt_data/systempromt";
+import '@tensorflow/tfjs';
 import * as use from '@tensorflow-models/universal-sentence-encoder';
-import * as tf from '@tensorflow/tfjs';
 // Helper to update chat history
 function updateHistory(setChatHistory, text, isError = false, isPending = false) {
     setChatHistory((prev) => [
@@ -42,17 +42,13 @@ export function findRelevantContext(promptVector, qaData, topK = 5) {
         ...item,
         similarity: cosineSimilarity(promptVector, item.vector)
     }));
-
     scored.sort((a, b) => b.similarity - a.similarity);
-
     return scored.slice(0, topK)
         .map(item => `Data: ${item.data}\n(similarity: ${item.similarity.toFixed(3)})`)
         .join("\n---\n");
 }
 
-
 const model = await use.load();
-
 
 export async function generateBotResponse(history, setChatHistory) {
         try {
@@ -71,8 +67,6 @@ export async function generateBotResponse(history, setChatHistory) {
                 })),
                 { role: "user", content: companyInfo } // userPrompt needs to be defined or passed as an argument
             ];
-
-            // Ghép conversation thành 1 prompt text
             const prompt = formattedHistory
                 .map(m => `${m.role}: ${m.content}`)
                 .join("\n");
@@ -85,14 +79,19 @@ export async function generateBotResponse(history, setChatHistory) {
                 body: JSON.stringify({
                     model: "gpt-oss:20b-cloud",
                     messages: [
-                        { role: "system", content: "You are a assistant." },
+                        { role: "system", content: "You are an assistant. Answer only if sure." },
                         { role: "user", content: finalPrompt }
                     ],
                     stream: false,
-                    options: { 
-                        temperature: 0,   // deterministic
-                        top_p: 1,         // không sampling
-                        top_k: 1          // chỉ chọn token xác suất cao nhất
+                    options: {
+                        temperature: 0,     // remain deterministic
+                        top_k: 1,           // only consider the top token
+                        top_p: 1,           // no limitation on cumulative probability
+                        presence_penalty: -0.5, // encourage topic repetition
+                        frequency_penalty: 0,   // keep default, avoid unusual repetition penalties
+                        repeat_penalty: 1,  // keep default, avoid unusual repetition penalties
+                        num_predict: 256,   // limit number of response tokens, avoid model "talking too much"
+                        seed: 1234          // fix seed -> results will always repeat if input is the same
                     }
                 }),
             });
@@ -102,11 +101,7 @@ export async function generateBotResponse(history, setChatHistory) {
             const apiResponseText = data.message?.content?.trim() || "⚠️ No response";
 
             console.log("Bot:", apiResponseText);
-        //////////////////////////////////////////
-
-
-        /////////////////////////////////////////
-        // Device commands
+        // User messages that start with these keywords will trigger specific actions
         if (apiResponseText.startsWith("wink")) {
             const arg = apiResponseText.split(/\s+/)[1];
             if (!arg) return updateHistory(setChatHistory, "Please provide device serial or IP");
@@ -277,7 +272,6 @@ export async function generateBotResponse(history, setChatHistory) {
             }
             return;
         }
-
         if (apiResponseText.toLowerCase().startsWith("send report")) {
             const parts = apiResponseText.split(" ");
             const ip = parts[2], email = parts[3];
@@ -291,6 +285,16 @@ export async function generateBotResponse(history, setChatHistory) {
                 updateHistory(setChatHistory, err, true);
             }
             return;
+        }
+        function formatTimestamp() {
+            const now = new Date();
+            const yyyy = now.getFullYear();
+            const mm = String(now.getMonth() + 1).padStart(2, "0");
+            const dd = String(now.getDate()).padStart(2, "0");
+            const hh = String(now.getHours()).padStart(2, "0");
+            const mi = String(now.getMinutes()).padStart(2, "0");
+            const ss = String(now.getSeconds()).padStart(2, "0");
+            return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
         }
         
         if (apiResponseText.toLowerCase().startsWith("decode")) {
@@ -315,20 +319,16 @@ export async function generateBotResponse(history, setChatHistory) {
             const ip = parts[2];
             const port = parts[3] || 51236;
             const time = parts[4] || 5000;
-
             if (!ip) {
                 return updateHistory(setChatHistory, "⚠️ Please provide device IP");
             }
-
             updateHistory(setChatHistory, `Retrieving data from ${ip} - Port:${port}...`, false, true);
-
             try {
                 const reply = await companyInfo["get data"](ip, port, time);
-
                 if (reply?.data && Array.isArray(reply.data)) {
                     reply.data.forEach((item, idx) => {
-                        const now = new Date().toLocaleTimeString();
-                        updateHistory(setChatHistory, `📌 ${now}: ${item}`);
+                        const ts = formatTimestamp();
+                        updateHistory(setChatHistory, `📌 ${ts}: ${item}`);
                     });
                 } else {
                     updateHistory(setChatHistory, reply.message || "⚠️ No data received");
@@ -338,7 +338,6 @@ export async function generateBotResponse(history, setChatHistory) {
             }
             return;
         }
-
         // Company info and fallback
         if (companyInfo[apiResponseText]) {
             const value = companyInfo[apiResponseText];
