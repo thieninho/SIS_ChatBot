@@ -47,7 +47,7 @@
         }
 
         sendMessage(payload);
-
+        console.log(payload);
         setTimeout(() => {
         if (!ackReceived) {
             reject("❌ Server is down, cannot perform communication actions with device.");

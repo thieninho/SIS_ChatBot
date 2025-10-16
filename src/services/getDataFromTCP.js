@@ -1,6 +1,6 @@
 import { sendMessage, addMessageListener } from "./socketClient";
 
-export async function decodeFunction(ip) {
+export async function getDataFromTCP(ip, port = 51236, time = 5000) {
     return new Promise((resolve, reject) => {
         let ackReceived = false;
 
@@ -23,10 +23,13 @@ export async function decodeFunction(ip) {
                     return;
                 }
 
-                // chỉ resolve khi đúng final message
-                if (data.type === "success" && data.message === "Decode function executed successfully.") {
+                // ✅ Chỉ cần nhận đúng 1 JSON thì resolve luôn
+                if (data.type === "success") {
                     cleanup();
                     resolve(data);
+                } else {
+                    cleanup();
+                    reject(data.message || "❌ Failed to retrieve data.");
                 }
 
             } catch (e) {
@@ -40,7 +43,7 @@ export async function decodeFunction(ip) {
             return;
         }
 
-        const payload = { message: "decode", IP: ip };
+        const payload = { message: "getDataFromTCP", IP: ip, port, time };
         console.log("📤 Sending payload:", payload);
         sendMessage(payload);
     });

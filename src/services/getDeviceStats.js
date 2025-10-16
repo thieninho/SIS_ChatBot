@@ -14,7 +14,7 @@ export async function getDeviceStatistics(ip) {
                 responseTimeout = setTimeout(() => {
                     reject("❌ Timeout: No statistics data received after ACK.");
                     removeListener();
-                }, 5000);
+                }, 10000);
 
                 return;
             }
@@ -40,7 +40,7 @@ export async function getDeviceStatistics(ip) {
                 } else {
                     reject({
                         type: "error",
-                        message: data.message || "❌ Failed to retrieve statistics.",
+                        message: data.message,
                         errorCode: data.errorCode || 1,
                     });
                 }

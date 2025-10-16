@@ -1,8 +1,6 @@
 import { companyInfo } from "../promt_data/userpromt";
 import systemPrompt from "../promt_data/systempromt";
-import { pipeline } from "@xenova/transformers";
 import * as use from '@tensorflow-models/universal-sentence-encoder';
-import * as tf from '@tensorflow/tfjs';
 
 // Helper to update chat history
 function updateHistory(setChatHistory, text, isError = false, isPending = false) {
@@ -63,7 +61,7 @@ export async function generateBotResponse(history, setChatHistory) {
             //const context = findRelevantContext(userPrompt);
             const embeddings = await model.embed([userPrompt]);
             const userVector = embeddings.arraySync()[0];
-            const context = findRelevantContext(userVector, qaData, 5);
+            const context = await findRelevantContext(userVector, qaData, 5);
             console.log("Found context:", context);
             const formattedHistory = [
                 { role: "system", content: systemPrompt },
@@ -91,7 +89,11 @@ export async function generateBotResponse(history, setChatHistory) {
                         { role: "user", content: finalPrompt }
                     ],
                     stream: false,
-                    options: { temperature: 0 }
+                    options: { 
+                        temperature: 0,   // deterministic
+                        top_p: 1,         // không sampling
+                        top_k: 1          // chỉ chọn token xác suất cao nhất
+                    }
                 }),
             });
             const data = await response.json();
@@ -268,7 +270,7 @@ export async function generateBotResponse(history, setChatHistory) {
                         .join("\n");
                     updateHistory(setChatHistory, "📊 Device Statistics:\n" + table);
                 } else {
-                    updateHistory(setChatHistory, reply.message || "❌ Failed to retrieve statistics.");
+                    updateHistory(setChatHistory, reply.message);
                 }
             } catch (err) {
                 updateHistory(setChatHistory, err, true);
@@ -292,44 +294,50 @@ export async function generateBotResponse(history, setChatHistory) {
         }
         
         if (apiResponseText.toLowerCase().startsWith("decode")) {
-        const parts = apiResponseText.split(" ");
-        const ip = parts[1];
-        if (!ip) {
-            setChatHistory((prev) => [
-                ...prev.filter((msg) => msg.text !== "Thinking..."),
-                { role: "model", text: "⚠️ Please provide device IP" }
-            ]);
+            const parts = apiResponseText.split(/\s+/);
+            const ip = parts[1];
+            if (!ip) {
+                return updateHistory(setChatHistory, "⚠️ Please provide device IP");
+            }
+            updateHistory(setChatHistory, "Decoding on " + ip + "... When the decoding process is finished, I will send a notification message.", false, true);
+            try {
+                const reply = await companyInfo["decode"](ip);
+                console.log("Decode reply:", reply);
+                updateHistory(setChatHistory, reply.message);
+                updateHistory(setChatHistory, "Decode completed.");
+            } catch (err) {
+                updateHistory(setChatHistory, "Error occurred while decoding", true);
+            }
             return;
         }
+        if (apiResponseText.toLowerCase().startsWith("get data")) {
+            const parts = apiResponseText.split(/\s+/);
+            const ip = parts[2];
+            const port = parts[3] || 51236;
+            const time = parts[4] || 5000;
 
-        setChatHistory((prev) => [
-            ...prev.filter((msg) => msg.text !== "Thinking..."),
-            { role: "model", text: `Decoding on device ${ip}...`, isPending: true },
-        ]);
-
-        try {
-            const reply = await companyInfo["decode"](ip);
-
-            if (reply.type === "success") {
-                setChatHistory((prev) => [
-                    ...prev.filter((msg) => msg.text !== `Decoding on device ${ip}...`),
-                    { role: "model", text: "✅ " + reply.message },
-                ]);
-            } else {
-                setChatHistory((prev) => [
-                    ...prev.filter((msg) => msg.text !== `Decoding on device ${ip}...`),
-                    { role: "model", text: reply.message || "❌ Decode failed" },
-                ]);
+            if (!ip) {
+                return updateHistory(setChatHistory, "⚠️ Please provide device IP");
             }
-        } catch (err) {
-            setChatHistory((prev) => [
-                ...prev.filter((msg) => msg.text !== `Decoding on device ${ip}...`),
-                { role: "model", text: String(err), isError: true },
-            ]);
-        }
-        return;
-    }
 
+            updateHistory(setChatHistory, `Retrieving data from ${ip} - Port:${port}...`, false, true);
+
+            try {
+                const reply = await companyInfo["get data"](ip, port, time);
+
+                if (reply?.data && Array.isArray(reply.data)) {
+                    reply.data.forEach((item, idx) => {
+                        const now = new Date().toLocaleTimeString();
+                        updateHistory(setChatHistory, `📌 ${now}: ${item}`);
+                    });
+                } else {
+                    updateHistory(setChatHistory, reply.message || "⚠️ No data received");
+                }
+            } catch (err) {
+                updateHistory(setChatHistory, String(err), true);
+            }
+            return;
+        }
 
         // Company info and fallback
         if (companyInfo[apiResponseText]) {

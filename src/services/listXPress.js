@@ -1,6 +1,5 @@
-    import { sendMessage, addMessageListener } from "./socketClient";
-
-    export async function listXPress(ip) {
+import { sendMessage, addMessageListener } from "./socketClient";
+export async function listXPress(ip) {
     return new Promise((resolve, reject) => {
         let ackReceived = false;
         const removeListener = addMessageListener((msg) => {
@@ -36,9 +35,7 @@
             removeListener();
         }
         });
-
         sendMessage({ message: "xpressList", IP: ip });
-
         setTimeout(() => {
         if (!ackReceived) {
             reject({ type: "error", message: "❌ Server did not respond with ACK" });
@@ -46,4 +43,4 @@
         }
         }, 3000);
     });
-    }
+}

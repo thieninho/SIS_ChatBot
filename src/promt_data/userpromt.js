@@ -137,4 +137,13 @@ export const companyInfo = {
         return String(err);
     }
     },
-    };
+
+    "get data": async (ip, port = 51236, time = 5000) => {
+    try {
+        const { getDataFromTCP } = await import("../services/getDataFromTCP");
+        return await getDataFromTCP(ip, port, time);
+    } catch (err) {
+        return String(err);
+    }
+    },
+};
