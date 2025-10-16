@@ -1,7 +1,7 @@
 import { companyInfo } from "../promt_data/userpromt";
 import systemPrompt from "../promt_data/systempromt";
 import * as use from '@tensorflow-models/universal-sentence-encoder';
-
+import * as tf from '@tensorflow/tfjs';
 // Helper to update chat history
 function updateHistory(setChatHistory, text, isError = false, isPending = false) {
     setChatHistory((prev) => [
