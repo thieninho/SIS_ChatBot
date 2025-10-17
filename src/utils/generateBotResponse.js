@@ -43,9 +43,7 @@ function findRelevantContext(promptVector, qaData, topK = 50, threshold = 0.4, m
         ...item,
         similarity: cosineSimilarity(promptVector, item.vector)
     }));
-
     scored.sort((a, b) => b.similarity - a.similarity);
-
     let selected = scored.filter(item => item.similarity >= threshold);
     console.log(`Found ${selected.length} items above threshold ${threshold}`);
     // Nếu ít hơn minResults → lấy thêm cho đủ
@@ -54,9 +52,7 @@ function findRelevantContext(promptVector, qaData, topK = 50, threshold = 0.4, m
         const extraItems = scored.slice(selected.length, selected.length + extraNeeded);
         selected = [...selected, ...extraItems];
     }
-
     selected = selected.slice(0, topK);
-
     return selected.map(item =>
         `Data: ${item.data}\n(similarity: ${item.similarity.toFixed(3)})`
     ).join("\n---\n");
@@ -71,7 +67,7 @@ export async function generateBotResponse(history, setChatHistory) {
             //const context = findRelevantContext(userPrompt);
             const embeddings = await model.embed([userPrompt]);
             const userVector = embeddings.arraySync()[0];
-            const context = await findRelevantContext(userVector, qaData, 30, 0.4, 10);
+            const context = await findRelevantContext(userVector, qaData, 50, 0.4, 10);
             console.log("Found context:", context);
             const formattedHistory = [
                 { role: "system", content: systemPrompt },
@@ -105,7 +101,7 @@ export async function generateBotResponse(history, setChatHistory) {
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || "Something went wrong");
             const apiResponseText = data.message?.content?.trim() || "I don’t have information about your request. Please provide more details, or it may be something I haven’t been trained on yet.";
-
+            
             console.log("Bot:", apiResponseText);
         // User messages that start with these keywords will trigger specific actions
         if (apiResponseText.startsWith("wink")) {
@@ -209,7 +205,7 @@ export async function generateBotResponse(history, setChatHistory) {
             return;
         }
 
-        if (apiResponseText.toLowerCase().startsWith("xpress")) {
+        if (apiResponseText.toLowerCase().startsWith("xpressfunction")) {
             const parts = apiResponseText.trim().split(/\s+/);
             const fn = `${parts[0].toUpperCase()} ${parts[1]}`;
             const ip = parts[2] || null;

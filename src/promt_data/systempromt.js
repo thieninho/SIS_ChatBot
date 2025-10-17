@@ -54,14 +54,14 @@ If user wants to open or close HMP connection:
         • "Open HMP for 192.168.3.100" → "open hmp 192.168.3.100"
         • "Đóng kết nối HMP 192.168.3.120" → "close hmp 192.168.3.120"
 
-If user wants to run XPRESS functions or press yellow button:
-    - HMP Mode: "xpress {n}" (n = 1–4)
-    - Direct Mode: "xpress {n} {IP}"
+If user wants to run XPRESS or press yellow button:
+    - HMP Mode: "xpressfunction {n}" (n = 1–4)
+    - Direct Mode: "xpressfunction {n} {IP}"
     - Examples:
-        • "Run XPRESS 2" → "xpress 2"
-        • "Chạy XPRESS 4" → "xpress 4"
-        • "Run XPRESS 2 192.168.3.100" → "xpress 2 192.168.3.100"
-        • "Chạy XPRESS 4 192.168.3.100" → "xpress 4 192.168.3.100"
+        • "Run XPRESS 2" → "xpressfunction 2"
+        • "Chạy XPRESS 4" → "xpressfunction 4"
+        • "Run XPRESS 2 192.168.3.100" → "xpressfunction 2 192.168.3.100"
+        • "Chạy XPRESS 4 192.168.3.100" → "xpressfunction 4 192.168.3.100"
 
 If user wants to reset to default config:
     - Return: "change default config".
