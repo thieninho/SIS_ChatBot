@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from "react";
 import { companyInfo } from "./promt_data/userpromt";
 import { initSocket } from "./services/socketClient";
 import { generateBotResponse } from "./utils/generateBotResponse";
+//import { generateBotResponse } from "./bot/generateResponse";
 
 
 const App = () => {

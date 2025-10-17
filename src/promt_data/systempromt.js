@@ -23,7 +23,7 @@ If user wants to discover devices:
         • "discover" → "all devices"
         • "Tìm thiết bị khả dụng" → "all devices"
 
-If user wants to wink a device:
+If user wants to wink a device or detect a device or know specific device:
     - Format: "wink {IP}" or "wink {Serial}".
     - Examples:
         • "Wink 192.168.3.100" → "wink 192.168.3.100"
@@ -113,8 +113,8 @@ If user wants to analyze device statistics:
     - Behavior: Respond in the same language as the user.
     - Do NOT return a command string here, but a clear human-readable analysis.
 
-If user wants to get data or retrieve code content:
-    - User Intent: Retrieve data from a device via TCP at a specified IP address, port, and time duration.
+If user wants to get data or output from device:
+    - User Intent: Retrieve output from a device via TCP at a specified IP address, port, and time duration.
     - Format: "get data {IP} {port} {time}"
     - Examples:
         • "get data 192.168.3.100" → "get data 192.168.3.100 51236 5000"

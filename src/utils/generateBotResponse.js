@@ -2,6 +2,7 @@ import { companyInfo } from "../promt_data/userpromt";
 import systemPrompt from "../promt_data/systempromt";
 import '@tensorflow/tfjs';
 import * as use from '@tensorflow-models/universal-sentence-encoder';
+import { log } from "@tensorflow/tfjs";
 // Helper to update chat history
 function updateHistory(setChatHistory, text, isError = false, isPending = false) {
     setChatHistory((prev) => [
@@ -37,15 +38,28 @@ function cosineSimilarity(vecA, vecB) {
     return magB === 0 ? 0 : dotProduct / (magA * magB);
 }
 
-export function findRelevantContext(promptVector, qaData, topK = 5) {
+function findRelevantContext(promptVector, qaData, topK = 50, threshold = 0.4, minResults = 10) {
     const scored = qaData.map(item => ({
         ...item,
         similarity: cosineSimilarity(promptVector, item.vector)
     }));
+
     scored.sort((a, b) => b.similarity - a.similarity);
-    return scored.slice(0, topK)
-        .map(item => `Data: ${item.data}\n(similarity: ${item.similarity.toFixed(3)})`)
-        .join("\n---\n");
+
+    let selected = scored.filter(item => item.similarity >= threshold);
+    console.log(`Found ${selected.length} items above threshold ${threshold}`);
+    // Nếu ít hơn minResults → lấy thêm cho đủ
+    if (selected.length < minResults) {
+        const extraNeeded = minResults - selected.length;
+        const extraItems = scored.slice(selected.length, selected.length + extraNeeded);
+        selected = [...selected, ...extraItems];
+    }
+
+    selected = selected.slice(0, topK);
+
+    return selected.map(item =>
+        `Data: ${item.data}\n(similarity: ${item.similarity.toFixed(3)})`
+    ).join("\n---\n");
 }
 
 const model = await use.load();
@@ -57,7 +71,7 @@ export async function generateBotResponse(history, setChatHistory) {
             //const context = findRelevantContext(userPrompt);
             const embeddings = await model.embed([userPrompt]);
             const userVector = embeddings.arraySync()[0];
-            const context = await findRelevantContext(userVector, qaData, 5);
+            const context = await findRelevantContext(userVector, qaData, 30, 0.4, 10);
             console.log("Found context:", context);
             const formattedHistory = [
                 { role: "system", content: systemPrompt },
@@ -85,27 +99,19 @@ export async function generateBotResponse(history, setChatHistory) {
                     stream: false,
                     options: {
                         temperature: 0,     // remain deterministic
-                        top_k: 1,           // only consider the top token
-                        top_p: 1,           // no limitation on cumulative probability
-                        presence_penalty: -0.5, // encourage topic repetition
-                        frequency_penalty: 0,   // keep default, avoid unusual repetition penalties
-                        repeat_penalty: 1,  // keep default, avoid unusual repetition penalties
-                        num_predict: 256,   // limit number of response tokens, avoid model "talking too much"
-                        seed: 1234          // fix seed -> results will always repeat if input is the same
                     }
                 }),
             });
             const data = await response.json();
             if (!response.ok) throw new Error(data.error || "Something went wrong");
-
-            const apiResponseText = data.message?.content?.trim() || "⚠️ No response";
+            const apiResponseText = data.message?.content?.trim() || "I don’t have information about your request. Please provide more details, or it may be something I haven’t been trained on yet.";
 
             console.log("Bot:", apiResponseText);
         // User messages that start with these keywords will trigger specific actions
         if (apiResponseText.startsWith("wink")) {
             const arg = apiResponseText.split(/\s+/)[1];
             if (!arg) return updateHistory(setChatHistory, "Please provide device serial or IP");
-            updateHistory(setChatHistory, "Winking...", false, true);
+            updateHistory(setChatHistory, "Winking..." + " IP: " + arg, false, true);
             try {
                 const reply = await companyInfo["wink"](arg);
                 updateHistory(setChatHistory, reply);
@@ -296,21 +302,46 @@ export async function generateBotResponse(history, setChatHistory) {
             const ss = String(now.getSeconds()).padStart(2, "0");
             return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
         }
-        
         if (apiResponseText.toLowerCase().startsWith("decode")) {
             const parts = apiResponseText.split(/\s+/);
             const ip = parts[1];
+            const port = parts[2] || 51236;   // default port
+            const time = parts[3] || 5000;    // default time
             if (!ip) {
                 return updateHistory(setChatHistory, "⚠️ Please provide device IP");
             }
-            updateHistory(setChatHistory, "Decoding on " + ip + "... When the decoding process is finished, I will send a notification message.", false, true);
+            updateHistory(
+                setChatHistory,
+                `Decoding on ${ip}... When the decoding process is finished, I will send a notification message.`,
+                false,
+                true
+            );
             try {
                 const reply = await companyInfo["decode"](ip);
                 console.log("Decode reply:", reply);
-                updateHistory(setChatHistory, reply.message);
-                updateHistory(setChatHistory, "Decode completed.");
+                if (reply?.message) {
+                    updateHistory(setChatHistory, reply.message);
+                }
+                if (reply?.toolFound) {
+                    updateHistory(setChatHistory, "Tool found: " + reply.toolFound);
+                }
+                //await new Promise(res => setTimeout(res, 1000));
+                const codeContent = await companyInfo["get data"](ip, port, time);
+                console.log("Code content:", codeContent);
+                if (Array.isArray(codeContent?.data)) {
+                    codeContent.data.forEach((item) => {
+                        const ts = formatTimestamp();
+                        updateHistory(setChatHistory, `📌 ${ts} - Code content: ${item}`);
+                    });
+                } else {
+                    updateHistory(
+                        setChatHistory,
+                        codeContent?.message || "⚠️ No data received"
+                    );
+                }
             } catch (err) {
-                updateHistory(setChatHistory, "Error occurred while decoding", true);
+                console.error("Decode error:", err);
+                updateHistory(setChatHistory, "❌ Error occurred while decoding", true);
             }
             return;
         }
@@ -328,7 +359,7 @@ export async function generateBotResponse(history, setChatHistory) {
                 if (reply?.data && Array.isArray(reply.data)) {
                     reply.data.forEach((item, idx) => {
                         const ts = formatTimestamp();
-                        updateHistory(setChatHistory, `📌 ${ts}: ${item}`);
+                        updateHistory(setChatHistory, `📌 ${ts} - Code content: ${item}`);
                     });
                 } else {
                     updateHistory(setChatHistory, reply.message || "⚠️ No data received");
