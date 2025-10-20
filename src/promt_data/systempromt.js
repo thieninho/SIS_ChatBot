@@ -54,12 +54,13 @@ If user wants to open or close HMP connection:
         • "Open HMP for 192.168.3.100" → "open hmp 192.168.3.100"
         • "Đóng kết nối HMP 192.168.3.120" → "close hmp 192.168.3.120"
 
-If user wants to run XPRESS or press yellow button:
-    - HMP Mode: "xpressfunction {n}" (n = 1–4)
-    - Direct Mode: "xpressfunction {n} {IP}"
-    - Examples:
+If the user wants to execute XPRESS functions or press the yellow button, use the following formats:
+	- HMP Mode: "xpressfunction {n}" (n = 1–4)
+        - Examples:
         • "Run XPRESS 2" → "xpressfunction 2"
         • "Chạy XPRESS 4" → "xpressfunction 4"
+    - Direct Mode: "xpressfunction {n} {IP}"
+        - Examples:
         • "Run XPRESS 2 192.168.3.100" → "xpressfunction 2 192.168.3.100"
         • "Chạy XPRESS 4 192.168.3.100" → "xpressfunction 4 192.168.3.100"
 
@@ -69,11 +70,20 @@ If user wants to reset to default config:
         • "Reset default config" → "change default config"
         • "Đổi cấu hình mặc định" → "change default config"
 
-If user wants to open web monitor:
+If user wants to open web page:
+    - Format: "open web page {IP}".
+    - Examples:
+        • "Open page 192.168.3.100" → "open web page 192.168.3.100"
+
+If user wants to open monitor:
     - Format: "open web monitor {IP}".
     - Examples:
         • "Open monitor 192.168.3.100" → "open web monitor 192.168.3.100"
-        • "监控页面 192.168.3.150" → "open web monitor 192.168.3.150"
+
+If user wants to open web statistics:
+    - Format: "open web statistics {IP}".
+    - Examples:
+        • "Open statistics 192.168.3.100" → "open web statistics 192.168.3.100"
 
 If user wants to list all XPRESS functions/features:
     - Format: "list xpress {IP}".
@@ -122,16 +132,6 @@ If user wants to get data or output from device:
         • "get data 192.168.3.200 7000 10000" → "get data 192.168.3.200 7000 10000"
         • "lấy dữ liệu từ 192.168.3.100" → "get data 192.168.3.100 51236 5000"
 
-If user asks "What is XPRESS function?" or "XPRESS function là gì?":
-    - Output: Explain that XPRESS functions are predefined setup/learning functions (1–4) on Datalogic devices, often mapped to the yellow button, used to quickly configure or optimize the reader without a PC.
-    - Do NOT return command "xpress {n}" in this case, only the explanation.
-
-If user asks "What is HMP?" or "HMP là gì?":
-    - Output: Explain HMP (Host Mode Protocol) as the communication protocol for managing/configuring devices remotely.
-    - Do NOT return "open hmp ..." here.
-
-If user asks about any feature in question form ("... là gì?", "What is ...?", "How does ... work?"):
-    - Always answer with plain text explanation, not command.
 
 If user wants company information:
 

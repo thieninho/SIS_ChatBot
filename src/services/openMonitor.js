@@ -9,18 +9,15 @@
             });
             return;
         }
-
-        // Tạo response object
         const response = {
             type: "success",
-            message: `Opened Web Monitor at http://${ip}`,
+            message: `Opened web monitor at http://${ip}/monitor`,
             errorCode: 0,
             ip
         };
         console.log(response.message)
         resolve(response.message);
-        window.open(`http://${ip}`, "_blank");
-
+        window.open(`http://${ip}/monitor`, "myNewWindow", "width=1060,height=740,left=100,top=100");
         } catch (err) {
         reject({
             type: "error",
@@ -29,4 +26,4 @@
         });
         }
     });
-    }
+}

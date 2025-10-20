@@ -23,7 +23,8 @@ body {
   min-height: auto;
   position: relative;
   min-height: 100vh;
-
+  /* background-image: url(./assets/Lc4TiwZ_fYS7YrUq.jpg);
+  background-size: cover; */
   background: none !important;
 }
 .chatbot-popup {
