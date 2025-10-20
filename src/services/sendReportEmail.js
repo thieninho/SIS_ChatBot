@@ -71,7 +71,6 @@ export async function sendReportEmail(ip, email, functions) {
             sent_at: sentAt,
             functions_html: functionsTable,
         };
-
         const response = await emailjs.send(serviceId, templateId, templateParams, userId);
         console.log("📧 EmailJS response:", response.status, response.text);
         console.log(functionsTable);

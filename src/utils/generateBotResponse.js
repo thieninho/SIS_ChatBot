@@ -1,8 +1,7 @@
 import { companyInfo } from "../promt_data/userpromt";
 import systemPrompt from "../promt_data/systempromt";
-import '@tensorflow/tfjs';
-import * as use from '@tensorflow-models/universal-sentence-encoder';
-import { log } from "@tensorflow/tfjs";
+import { loadUseModel } from "./useModel";
+
 // Helper to update chat history
 function updateHistory(setChatHistory, text, isError = false, isPending = false) {
     setChatHistory((prev) => [
@@ -58,7 +57,8 @@ function findRelevantContext(promptVector, qaData, topK = 50, threshold = 0.5, m
     ).join("\n---\n");
 }
 
-const model = await use.load();
+const model = await loadUseModel();
+
 
 export async function generateBotResponse(history, setChatHistory) {
         try {
@@ -273,7 +273,7 @@ export async function generateBotResponse(history, setChatHistory) {
                         .join("\n");
                     updateHistory(setChatHistory, "XPRESS Functions:\n" + table);
                 } else {
-                    updateHistory(setChatHistory, reply.message || "❌ Failed to get XPRESS list");
+                    updateHistory(setChatHistory, reply.message || "Failed to get XPRESS list");
                 }
             } catch (err) {
                 updateHistory(setChatHistory, err, true);
@@ -282,55 +282,55 @@ export async function generateBotResponse(history, setChatHistory) {
         }
 
         if (apiResponseText.toLowerCase().startsWith("get statistics")) {
-    const ip = apiResponseText.split(" ")[2];
-    if (!ip) return updateHistory(setChatHistory, "⚠️ Please provide device IP");
-    updateHistory(setChatHistory, "Retrieving device statistics...", false, true);
+        const ip = apiResponseText.split(" ")[2];
+        if (!ip) return updateHistory(setChatHistory, "⚠️ Please provide device IP");
+        updateHistory(setChatHistory, "Retrieving device statistics...", false, true);
 
-    try {
-        const reply = await companyInfo["get statistics"](ip);
+        try {
+            const reply = await companyInfo["get statistics"](ip);
+            console.log("Device statistics reply:", reply);
+            if (reply.type === "success" && reply.results) {
+                // whitelist các field cần giữ
+                const allowedFields = [
+                    "Elapsed Time (sec)",
+                    "Valid Code Count",
+                    "Reading Phase Count",
+                    "Number of Decoded Codes",
+                    "Good Read Count",
+                    "Partial Read Count",
+                    "No Read Count",
+                    "No Code Count",
+                    "Multiple Read Count",
+                    "Successful Collection Count",
+                    "Failed Collection Count",
+                    "Match Code Count",
+                    "No Match Code Count",
+                    "Average Barcode X Pixel Position On Image",
+                    "Average Barcode Y Pixel Position On Image",
+                    "Frame Rate (fps)",
+                    "Conveyor Speed (mm/sec)",
+                    "Encoder Frequency",
+                    "Average Codes or Labels Found",
+                    "Average Decoding Time (ms)",
+                    "Image Acquisition Counter",
+                    "Average Image Aquisition Time (ms)",
+                    "Average Image Processing Time (ms)"
+                ];
 
-        if (reply.type === "success" && reply.results) {
-            // whitelist các field cần giữ
-            const allowedFields = [
-                "Elapsed Time (sec)",
-                "Valid Code Count",
-                "Reading Phase Count",
-                "Number of Decoded Codes",
-                "Good Read Count",
-                "Partial Read Count",
-                "No Read Count",
-                "No Code Count",
-                "Multiple Read Count",
-                "Successful Collection Count",
-                "Failed Collection Count",
-                "Match Code Count",
-                "No Match Code Count",
-                "Average Barcode X Pixel Position On Image",
-                "Average Barcode Y Pixel Position On Image",
-                "Frame Rate (fps)",
-                "Conveyor Speed (mm/sec)",
-                "Encoder Frequency",
-                "Average Codes or Labels Found",
-                "Average Decoding Time (ms)",
-                "Image Acquisition Counter",
-                "Average Image Aquisition Time (ms)",
-                "Average Image Processing Time (ms)"
-            ];
+                // Lọc dữ liệu
+                let table = Object.entries(reply.results)
+                    .filter(([key]) => allowedFields.includes(key))
+                    .map(([key, val]) => `• ${key}: ${val}`)
+                    .join("\n");
 
-            // Lọc dữ liệu
-            let table = Object.entries(reply.results)
-                .filter(([key]) => allowedFields.includes(key))
-                .map(([key, val]) => `• ${key}: ${val}`)
-                .join("\n");
-
-            updateHistory(setChatHistory, "📊 Device Statistics:\n" + table);
-        } else {
-            updateHistory(setChatHistory, reply.message);
+                updateHistory(setChatHistory, "📊 Device Statistics:\n" + table);
+            } else {
+                updateHistory(setChatHistory, reply || "Failed to get device statistics");
+            }
+        } catch (err) {
+            updateHistory(setChatHistory, err, true);
         }
-    } catch (err) {
-        updateHistory(setChatHistory, err, true);
-    }
-    return;
+        return;
 }
 
 
@@ -378,28 +378,27 @@ export async function generateBotResponse(history, setChatHistory) {
                 if (reply?.message) {
                     updateHistory(setChatHistory, reply.message);
                 }
-                c
                 if (reply?.toolFound) {
                     const cleanedTool = reply.toolFound.replace(/\s*[12]D decoder tool.*/i, "").trim();
                     updateHistory(setChatHistory, "Code found: " + cleanedTool);
                 }
-                //await new Promise(res => setTimeout(res, 1000));
-                // const codeContent = await companyInfo["get data"](ip, port, time);
-                // console.log("Code content:", codeContent);
-                // if (Array.isArray(codeContent?.data)) {
-                //     codeContent.data.forEach((item) => {
-                //         const ts = formatTimestamp();
-                //         updateHistory(setChatHistory, `📌 ${ts} - Code content: ${item}`);
-                //     });
-                // } else {
-                //     updateHistory(
-                //         setChatHistory,
-                //         codeContent?.message || "⚠️ No data received"
-                //     );
-                // }
+                await new Promise(res => setTimeout(res, 1000));
+                const codeContent = await companyInfo["get data"](ip, port, time);
+                console.log("Code content:", codeContent);
+                if (Array.isArray(codeContent?.data)) {
+                    codeContent.data.forEach((item) => {
+                        const ts = formatTimestamp();
+                        updateHistory(setChatHistory, `📌 ${ts} - Code content: ${item}`);
+                    });
+                } else {
+                    updateHistory(
+                        setChatHistory,
+                        codeContent?.message || "⚠️ No data received"
+                    );
+                }
             } catch (err) {
                 console.error("Decode error:", err);
-                updateHistory(setChatHistory, "❌ Error occurred while decoding", true);
+                updateHistory(setChatHistory, "Error occurred while decoding", true);
             }
             return;
         }

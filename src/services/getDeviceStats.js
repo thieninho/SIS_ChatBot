@@ -12,7 +12,7 @@ export async function getDeviceStatistics(ip) {
 
                 // set timeout chờ data sau ACK
                 responseTimeout = setTimeout(() => {
-                    reject("❌ Timeout: No statistics data received after ACK.");
+                    reject("Timeout: No statistics data received after ACK.");
                     removeListener();
                 }, 10000);
 
