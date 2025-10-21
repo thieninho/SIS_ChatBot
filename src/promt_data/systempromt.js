@@ -36,13 +36,12 @@ If user wants to discover devices:
     - Examples:
         • "List all devices" → "all devices"
         • "discover" → "all devices"
-        • "Tìm thiết bị khả dụng" → "all devices"
 
 If user wants to wink a device or detect a device or know specific device:
-    - Format: "wink {IP}" or "wink {Serial}".
+    - Format: "wink {IP}"".
     - Examples:
         • "Wink 192.168.3.100" → "wink 192.168.3.100"
-        • "Please wink serial G21L80705" → "wink G21L80705"
+        • "Detect 192.168.3.100" → "wink 192.168.3.100"
 
 If user wants to restart a device:
     - Format: "restart {IP}".

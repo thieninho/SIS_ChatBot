@@ -3,61 +3,65 @@ import { sendMessage, addMessageListener } from "./socketClient";
 export async function discoverDevices(timeout = 10000) {
     return new Promise((resolve, reject) => {
         let ackReceived = false;
+        let timeoutId;
 
         const removeListener = addMessageListener((msg) => {
             if (msg === "ACK") {
-            ackReceived = true;
-            console.log("✅ ACK received, waiting for JSON...");
-            return;
+                ackReceived = true;
+                console.log("✅ ACK received, waiting for JSON...");
+                return;
             }
 
             try {
-            const data = JSON.parse(msg);
-            if (!ackReceived) {
-                reject("❌ No ACK before data");
-                removeListener();
-                return;
-            }
+                const data = JSON.parse(msg);
 
-            const results = data.results || [];
-            if (results.length === 0) {
-                resolve("No devices found.");
-                removeListener();
-                return;
-            }
-
-            let output = "Discovered devices:\n";
-            results.forEach((res) => {
-                if (res.devices.length === 0) {
-                    //output += `- IP: ${res.ipAddress}: No devices\n`;
-                } else {
-                    
-                res.devices.forEach((dev) => {
-                    if (dev.isSimulator == "False") {
-                        output += `- ${dev.family}; IP: ${dev.address}; Serial: ${dev.serial} \n`;
-                    }
-                    // MAC: ${dev.mac}
-                });
+                if (!ackReceived) {
+                    reject("❌ No ACK before data");
+                    removeListener();
+                    clearTimeout(timeoutId);
+                    return;
                 }
-            });
 
-            resolve(output.trim());
-            removeListener();
+                const results = data.results || [];
+                if (results.length === 0) {
+                    resolve([]);
+                    removeListener();
+                    clearTimeout(timeoutId);
+                    return;
+                }
+
+                // ✅ Chuẩn hóa dữ liệu về dạng [{ ip, model, serial }]
+                const devices = results.flatMap((res) =>
+                    res.devices
+                        .filter((dev) => dev.isSimulator === "False")
+                        .map((dev) => ({
+                            ip: dev.address,
+                            model: dev.family,
+                            serial: dev.serial,
+                        }))
+                );
+
+                console.log("✅ Discovered devices:", devices);
+                resolve(devices);
+
+                removeListener();
+                clearTimeout(timeoutId);
             } catch (e) {
-            reject("Error parsing response: " + e.message);
-            removeListener();
+                reject("Error parsing response: " + e.message);
+                removeListener();
+                clearTimeout(timeoutId);
             }
         });
 
-        // gửi discover
+        // Gửi lệnh discover
         sendMessage({ message: "discover" });
 
-        // timeout
-        setTimeout(() => {
+        // Timeout (3 giây hoặc dùng timeout param)
+        timeoutId = setTimeout(() => {
             if (!ackReceived) {
-            reject("❌ Server is down, cannot perform communication actions with device.");
-            removeListener();
+                reject("❌ Server is down, cannot perform communication actions with device.");
+                removeListener();
             }
-        }, 3000);
-        });
-    }
+        }, timeout);
+    });
+}

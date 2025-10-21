@@ -20,30 +20,41 @@ import { useRef, useState, useEffect } from "react";
         newRecognition.continuous = true;
 
         newRecognition.onresult = (event) => {
-            let interimTranscript = "";
-            let finalTranscript = "";
+        let interimTranscript = "";
+        let finalTranscript = "";
 
-            for (let i = event.resultIndex; i < event.results.length; ++i) {
+        for (let i = event.resultIndex; i < event.results.length; ++i) {
             const transcript = event.results[i][0].transcript;
             if (event.results[i].isFinal) {
-                finalTranscript += transcript;
+            finalTranscript += transcript;
             } else {
-                interimTranscript += transcript;
+            interimTranscript += transcript;
             }
-            }
+        }
 
-            if (inputRef.current) {
+        finalTranscript = finalTranscript.trim().replace(/\.$/, "");
+        interimTranscript = interimTranscript.trim().replace(/\.$/, "");
+
+        if (inputRef.current) {
             inputRef.current.value = finalTranscript + interimTranscript;
-            }
+        }
 
-            // reset silence timer
-            if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
-            silenceTimerRef.current = setTimeout(() => {
+        // Reset silence timer
+        if (silenceTimerRef.current) clearTimeout(silenceTimerRef.current);
+
+        // Nếu im lặng 3s => coi như nói xong => gọi handleFormSubmit
+        silenceTimerRef.current = setTimeout(() => {
             if (inputRef.current && inputRef.current.value.trim()) {
-                handleFormSubmit({ preventDefault: () => {} });
+                silenceTimerRef.current = setTimeout(() => {
+                    if (inputRef.current && inputRef.current.value.trim()) {
+                        inputRef.current.form.requestSubmit(); // <-- gửi form thật
+                    }
+}, 1500);
+
             }
-            }, 3000);
+        }, 1500);
         };
+
 
         newRecognition.onerror = (e) => {
             console.error("Recognition error:", e.error);
