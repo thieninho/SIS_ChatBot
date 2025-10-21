@@ -125,7 +125,7 @@ if (apiResponseText.toLowerCase().startsWith("all devices")) {
         };
 
         const formattedList = devices
-            .map(d => `- ${d.model}.; IP: ${d.ip}; Serial: ${d.serial}`)
+            .map(d => `- ${d.model}; IP: ${d.ip}; Serial: ${d.serial}`)
             .join("\n");
 
         console.log("Discovered devices:", formattedList);
