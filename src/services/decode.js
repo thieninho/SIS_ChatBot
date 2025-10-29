@@ -1,6 +1,6 @@
 import { sendMessage, addMessageListener } from "./socketClient";
 
-export async function decodeFunction(ip) {
+export async function decodeFunction(ip, useStandard = "false") {
     return new Promise((resolve, reject) => {
         let ackReceived = false;
         const cleanup = () => removeListener();
@@ -31,7 +31,7 @@ export async function decodeFunction(ip) {
             reject("⚠️ Please provide device IP");
             return;
         }
-        const payload = { message: "decode", IP: ip };
+        const payload = { message: "decode", IP: ip, useStandard: useStandard };
         console.log("📤 Sending payload:", payload);
         sendMessage(payload);
     });

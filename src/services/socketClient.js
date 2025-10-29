@@ -1,7 +1,7 @@
     let socket = null;
     let listeners = [];
 
-    export function initSocket(url = "ws://192.168.3.99:3000") {
+    export function initSocket(url = "ws://10.84.30.91:3000") {
     if (socket) return socket; // tránh tạo lại nhiều lần
     socket = new WebSocket(url);
 

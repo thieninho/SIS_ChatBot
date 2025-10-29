@@ -433,13 +433,9 @@ if (apiResponseText.toLowerCase().startsWith("send report")) {
 if (apiResponseText.toLowerCase().startsWith("decode")) {
     const parts = apiResponseText.split(/\s+/);
     const ip = parts[1];
-    const port = parts[2] || 51236;
-    const time = parts[3] || 5000;
     if (!ip) return updateHistory(setChatHistory, "⚠️ Please provide device IP");
-
     const device = deviceMap[ip];
     const deviceText = device?.model ? `${device.model} | IP: ${ip}` : `IP: ${ip}`;
-
     updateHistory(setChatHistory, `Decoding... ${deviceText}`, false, true);
     updateHistory(setChatHistory, ` When the decoding process is finished, I will send a notification message.`, false, true);
     try {
