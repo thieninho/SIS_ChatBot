@@ -91,7 +91,24 @@ import { useRef, useState, useEffect } from "react";
 
     const stopRecording = () => {
         setIsRecording(false);
-        if (recognition) recognition.stop();
+        if (recognition) {
+        recognition.onend = () => {
+            // recreate recognition instance
+            const SpeechRecognition =
+                window.SpeechRecognition || window.webkitSpeechRecognition;
+            const newRecognition = new SpeechRecognition();
+            newRecognition.lang = language || "en-US";
+            newRecognition.interimResults = true;
+            newRecognition.continuous = true;
+
+            newRecognition.onresult = recognition.onresult; // copy handlers
+            newRecognition.onerror = recognition.onerror;
+
+            setRecognition(newRecognition);
+        };
+        recognition.stop();
+    }
+
 
         if (silenceTimerRef.current) {
         clearTimeout(silenceTimerRef.current);
