@@ -92,7 +92,7 @@ export async function generateBotResponse(history, setChatHistory) {
         const prompt = formattedHistory.map(m => `${m.role}: ${m.content}`).join("\n");
         const finalPrompt = context ? `Context:\n${context}\n\n${prompt}` : prompt;
 
-        const response = await fetch("http://10.84.30.107:11500/api/chat", {
+        const response = await fetch("http://10.84.102.223:11500/api/chat", {
         //const response = await fetch("http://localhost:11500/api/chat", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -118,18 +118,22 @@ if (apiResponseText.toLowerCase().startsWith("all devices")) {
         updateHistory(setChatHistory, `Discovering...`, false, true);
         const devices = await companyInfo["all devices"](); 
         // devices là array [{ ip, model }]
-        
-        deviceMap = { 
-            ...deviceMap, 
-            ...Object.fromEntries(devices.map(d => [d.ip, { model: d.model, serial: d.serial }])) 
-        };
-
-        const formattedList = devices
-            .map(d => `- ${d.model}; IP: ${d.ip}; Serial: ${d.serial}`)
-            .join("\n");
-
-        console.log("Discovered devices:", formattedList);
-        updateHistory(setChatHistory, "Discovered devices:\n" + formattedList);
+        console.log(devices)
+        if (devices.length == 0)
+        {
+            updateHistory(setChatHistory, "No Matrix device appears to be connected to your network at this moment. Please verify your connection and try again.");
+        }
+        else
+        {
+            deviceMap = { 
+                ...deviceMap, 
+                ...Object.fromEntries(devices.map(d => [d.ip, { model: d.model, serial: d.serial }])) 
+            };
+            const formattedList = devices
+                .map(d => `- ${d.model}; IP: ${d.ip}; Serial: ${d.serial}`)
+                .join("\n");
+            updateHistory(setChatHistory, "Discovered devices:\n" + formattedList);
+        }
     } catch (err) {
         updateHistory(setChatHistory, err, true);
     }
